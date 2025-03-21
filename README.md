@@ -7,6 +7,7 @@ FeexWeb (got it?) is a minimal functional library for building web applications 
 It was created during one hour vibe coding session 😊 with Cloude. Simply amazing what can be acomplished these days in a short time. Kudos to my sidekick 🙌
 
 **This is not going anywhere, just a little play around.**
+**Disclaimer** It works on my michine :) - no other guarantees
 
 ## About WebJSX and HTMX
 
