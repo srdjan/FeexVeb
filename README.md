@@ -1,8 +1,19 @@
-# FxWeb with HTMX Integration Guide
+# FeexWeb light WebComponents Library
 
-This guide explains how to use FxWeb with HTMX to create powerful web applications that combine client-side state management with server-driven HTML updates.
+This guide explains how to use <strongFeexWeb</strong> to create powerful web applications that combine client-side state management with server-driven HTML updates.
 
-## What is HTMX?
+## What is FeexWeb?
+FeexWeb (got it?) is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity.
+
+
+## About WebJSX and HTMX
+
+WebJSX is a minimal library for building web applications with JSX and Web Components. It provides just two core functions:
+
+- **`createElement`**: Creates virtual DOM elements using JSX syntax
+- **`applyDiff`**: Efficiently applies changes to the real DOM by comparing virtual nodes
+
+WebJSX allows you to write declarative UI components using familiar JSX syntax while keeping the runtime small and focused. It works seamlessly with standard Web Components and doesn't require a complex build system.
 
 HTMX is a dependency-free JavaScript library that allows you to access modern browser features directly from HTML, rather than using JavaScript. It extends HTML with attributes like `hx-get`, `hx-post`, and `hx-swap` that allow you to make AJAX requests and update the page dynamically.
 

@@ -4,7 +4,7 @@
  * This example demonstrates using FxWeb with HTMX to create a hybrid application
  * that uses both client-side reactivity and server-driven updates.
  */
-import FxWeb from "../../lib/fxweb.js";
+import FxWeb from "../../lib/feexweb.js";
 
 // Add styles for the application
 const addStyles = () => {
