@@ -4,7 +4,7 @@
 
 FeexWeb (got it?) is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use <strongFeexWeb</strong> to create powerful web applications that combine client-side state management with server-driven HTML updates.
 
-It was created during one hour vice coding session 😊 with Cloude. Simply amazing what can be acomplished these days in a short time. Kudos to my sidekick 🙌
+It was created during one hour vibe coding session 😊 with Cloude. Simply amazing what can be acomplished these days in a short time. Kudos to my sidekick 🙌
 
 ## About WebJSX and HTMX
 
@@ -49,7 +49,8 @@ Together, they create a powerful approach that offers:
 ```html
 <!-- Include FxWeb -->
 <script type="module">
-  import FxWeb from './functional-htmx-library.js';
+  import FxWeb from '../../lib/feexweb.js';
+  import * as webjsx from '../../lib/deps/webjsx/dist/index.js';
   
   // Initialize HTMX
   FxWeb.htmx.init({
@@ -423,5 +424,4 @@ By combining FxWeb's functional components with HTMX's server-driven updates, yo
 ## Resources
 
 - [HTMX Documentation](https://htmx.org/docs/)
-- [Web Components MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_components)
-- [Custom Elements v1](https://developers.google.com/web/fundamentals/web-components/customelements)
+- [WebJSX GitHub](https://github.com/webjsx/webjsx)
