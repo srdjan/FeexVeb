@@ -1,10 +1,12 @@
-# FeexWeb light WebComponents Library
+# FeexWeb - Functional Web Components Library
 
 ## What is FeexWeb?
 
 FeexWeb (got it?) is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use <strongFeexWeb</strong> to create powerful web applications that combine client-side state management with server-driven HTML updates.
 
 It was created during one hour vibe coding session 😊 with Cloude. Simply amazing what can be acomplished these days in a short time. Kudos to my sidekick 🙌
+
+This is not going anywhere, just a little play around.
 
 ## About WebJSX and HTMX
 
