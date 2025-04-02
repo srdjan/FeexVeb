@@ -1,6 +1,3 @@
-// deno-htmx-server.ts
-// Run with: deno run --allow-net --allow-read deno-htmx-server.ts
-
 // Counter state (in a real app, this would be in a database)
 let counter = 0;
 
