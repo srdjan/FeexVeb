@@ -61,10 +61,10 @@ Together, they create a powerful approach that offers:
 ```javascript
 FeexVeb.component({
   tag: 'my-counter',
-  
+
   setup: (ctx) => {
     const count = FeexVeb.useState(0);
-    
+
     return {
       state: { count },
       methods: {
@@ -72,7 +72,7 @@ FeexVeb.component({
       }
     };
   },
-  
+
   render: (ctx) => (
     <div>
       <div>Count: {ctx.count.get()}</div>
@@ -89,10 +89,10 @@ FeexVeb.component({
   tag: 'styled-counter',
   shadowMode: 'open', // Enable shadow DOM
   useMonospaceStyles: true, // Apply monospace styling (default is true)
-  
+
   setup: (ctx) => {
     const count = FeexVeb.useState(0);
-    
+
     return {
       state: { count },
       methods: {
@@ -100,7 +100,7 @@ FeexVeb.component({
       }
     };
   },
-  
+
   render: (ctx) => (
     <div class="container">
       <h2>Monospace Styled Counter</h2>
@@ -116,7 +116,7 @@ FeexVeb.component({
 ```javascript
 FeexVeb.htmx.component({
   tag: 'server-counter',
-  
+
   setup: (ctx) => {
     return {
       methods: {
@@ -131,20 +131,20 @@ FeexVeb.htmx.component({
       }
     };
   },
-  
+
   render: (ctx) => (
     <div>
       <div id="counter-value" hx-get="/api/counter/value" hx-trigger="load">
         Loading...
       </div>
-      
-      <button 
-        hx-post="/api/counter/increment" 
+
+      <button
+        hx-post="/api/counter/increment"
         hx-target="#counter-value"
       >
         Increment
       </button>
-      
+
       <button onclick={ctx.resetCounter}>Reset</button>
     </div>
   )
@@ -163,7 +163,7 @@ FeexVeb.component({
   tag: 'styled-component',
   shadowMode: 'open', // Enable shadow DOM
   useMonospaceStyles: true, // Apply monospace styling (default is true)
-  
+
   // Component implementation...
 });
 ```
@@ -176,7 +176,7 @@ FeexVeb.component({
   tag: 'unstyled-component',
   shadowMode: 'open',
   useMonospaceStyles: false, // Disable default monospace styling
-  
+
   // Component implementation...
 });
 ```
@@ -194,6 +194,78 @@ const styleElement = FeexVeb.styling.createMonospaceStyleElement();
 FeexVeb.styling.injectMonospaceStyles(element);
 ```
 
+## Design Philosophy
+
+FeexVeb's default styling system is built upon **"The Monospace Web"** design principles created by [Oskar Wickström](https://owickstrom.github.io/the-monospace-web/). This design philosophy emphasizes simplicity, readability, and content-focused web experiences through the strategic use of monospace typography and minimal visual design.
+
+### About "The Monospace Web"
+
+"The Monospace Web" advocates for:
+
+- **Monospace typography** as the foundation for improved readability and consistent visual rhythm
+- **Minimal color schemes** that prioritize content over decoration
+- **Consistent spacing** using systematic measurements
+- **Focus on content** rather than complex visual elements
+- **Accessibility** through high contrast and clear typography
+
+### FeexVeb's Implementation
+
+FeexVeb implements these principles through two main CSS exports:
+
+- **`FeexVeb.styling.monospaceCss`** - Optimized for Shadow DOM components using `:host` selectors
+- **`FeexVeb.styling.monospaceCssForHtml`** - Adapted for regular HTML documents using `body` and element selectors
+
+Both implementations provide:
+
+```css
+/* Core monospace font stack */
+--mono-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+/* Systematic spacing and sizing */
+--mono-spacing-unit: 1rem;
+--mono-line-height: 1.5;
+--mono-max-width: 70ch;
+
+/* Minimal, accessible color palette */
+--mono-text: #222222;
+--mono-bg: #ffffff;
+--mono-link: #0000ee;
+--mono-border: #dddddd;
+```
+
+### Benefits for FeexVeb Applications
+
+1. **Instant Professional Appearance** - Components look polished without custom CSS
+2. **Consistent User Experience** - Unified design language across all components
+3. **Improved Readability** - Monospace fonts enhance text scanning and comprehension
+4. **Accessibility** - High contrast ratios and clear typography
+5. **Responsive Design** - Built-in mobile-first responsive behavior
+6. **Developer Productivity** - Focus on functionality rather than styling decisions
+
+### Customization and Flexibility
+
+While FeexVeb defaults to monospace styling, you maintain full control:
+
+```javascript
+// Use default monospace styling
+FeexVeb.component({
+  tag: 'clean-component',
+  shadowMode: 'open',
+  useMonospaceStyles: true, // Default behavior
+  // ...
+});
+
+// Disable for custom styling
+FeexVeb.component({
+  tag: 'custom-component',
+  shadowMode: 'open',
+  useMonospaceStyles: false, // Opt out of defaults
+  // ...
+});
+```
+
+This approach allows you to leverage the proven design principles of "The Monospace Web" while maintaining the flexibility to customize when needed. We're grateful to Oskar Wickström for creating and sharing these thoughtful design principles that make the web more readable and accessible.
+
 ## HTMX Events
 
 FeexVeb can listen to HTMX events for enhanced integration:
@@ -207,33 +279,33 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 // Custom HTMX event handling in components
 FeexVeb.component({
   tag: 'data-loader',
-  
+
   setup: (ctx) => {
     const element = ctx.element;
-    
+
     // Create effect to handle HTMX events
     const setupHtmxHandlers = () => {
       const handleAfterRequest = (event) => {
         console.log('Request completed', event.detail);
       };
-      
+
       element.addEventListener('htmx:afterRequest', handleAfterRequest);
-      
+
       // Return cleanup function
       return () => {
         element.removeEventListener('htmx:afterRequest', handleAfterRequest);
       };
     };
-    
+
     return {
       effects: [setupHtmxHandlers]
     };
   },
-  
+
   render: (ctx) => (
     <div>
-      <div 
-        hx-get="/api/data" 
+      <div
+        hx-get="/api/data"
         hx-trigger="load"
         hx-indicator="#loading"
       >
