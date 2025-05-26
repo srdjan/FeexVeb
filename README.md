@@ -2,38 +2,45 @@
 
 ## What is FeexWeb?
 
-FeexWeb (got it?) is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use <strongFeexWeb</strong> to create powerful web applications that combine client-side state management with server-driven HTML updates.
+FeexWeb is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use **FeexWeb** to create powerful web applications that combine client-side state management with server-driven HTML updates.
 
-It was created during one hour vibe coding session 😊 with Cloude. Simply amazing what can be acomplished these days in a short time. Kudos to my sidekick 🙌
+It was created during a one-hour vibe coding session 😊 with Claude. Simply amazing what can be accomplished these days in a short time. Kudos to my sidekick 🙌
 
 **This is not going anywhere, just a little play around.**
-**Disclaimer** It works on my michine :) - no other guarantees
+**Disclaimer:** It works on my machine :) - no other guarantees
 
-## About WebJSX and HTMX
+## Getting Started
 
-WebJSX is a minimal library for building web applications with JSX and Web Components. It provides just two core functions:
+### Installation
 
-- **`createElement`**: Creates virtual DOM elements using JSX syntax
-- **`applyDiff`**: Efficiently applies changes to the real DOM by comparing virtual nodes
+1. Clone the repository
+2. Navigate to an example directory: `cd examples/counter`
+3. Start the server: `deno run --allow-net --allow-read ../../server/server.ts`
+4. Open your browser to `http://localhost:8000`
 
-WebJSX allows you to write declarative UI components using familiar JSX syntax while keeping the runtime small and focused. It works seamlessly with standard Web Components and doesn't require a complex build system.
+### Project Structure
+
+- `lib/feexweb.js` - Core library
+- `lib/src/` - Modular implementation files
+- `examples/` - Example implementations
+- `server/` - Deno HTTP server for examples
+
+## About FeexWeb and HTMX
+
+FeexWeb is a minimal library for building web applications with JSX and Web Components. It provides:
+
+- **Component Creation**: Define custom elements with reactive state
+- **State Management**: Reactive state with `useState` and `useComputed`
+- **Side Effects**: Manage effects with cleanup functions
+- **HTMX Integration**: Seamless integration with HTMX for server interactions
 
 HTMX is a dependency-free JavaScript library that allows you to access modern browser features directly from HTML, rather than using JavaScript. It extends HTML with attributes like `hx-get`, `hx-post`, and `hx-swap` that allow you to make AJAX requests and update the page dynamically.
 
-Using HTMX, you can:
+## Why Use FeexWeb with HTMX?
 
-- Make HTTP requests (`GET`, `POST`, `PUT`, `DELETE`, etc.) from any HTML element
-- Update any element on the page with the response
-- Trigger requests on any event (not just clicks)
-- Use CSS transitions for smooth page updates
-- Work with WebSockets and Server-Sent Events
-- And much more...
+FeexWeb and HTMX complement each other perfectly:
 
-## Why Use FxWeb with HTMX?
-
-FxWeb and HTMX complement each other perfectly:
-
-- **FxWeb**: Provides client-side state management and component lifecycle, using a functional approach with custom elements.
+- **FeexWeb**: Provides client-side state management and component lifecycle, using a functional approach with custom elements.
 - **HTMX**: Provides HTML-driven server communication and page updates.
 
 Together, they create a powerful approach that offers:
@@ -45,95 +52,13 @@ Together, they create a powerful approach that offers:
 5. **Improved performance**: Smaller JS payload, faster loading times
 6. **Simplified mental model**: HTML-driven approach is easier to reason about
 
-## Getting Started
+## Creating Components
 
-### 1. Install FxWeb and HTMX
-
-```html
-<!-- Include FxWeb -->
-<script type="module">
-  import FxWeb from '../../lib/feexweb.js';
-  import * as webjsx from '../../lib/deps/webjsx/dist/index.js';
-  
-  // Initialize HTMX
-  FxWeb.htmx.init({
-    // Optional HTMX config options
-    defaultSwapStyle: 'innerHTML',
-    historyCacheSize: 10
-  }).then(() => {
-    console.log('HTMX initialized!');
-  });
-</script>
-```
-
-### 2. Create a Component with HTMX Support
+### Basic Component
 
 ```javascript
 FxWeb.component({
-  tag: 'user-profile',
-  
-  setup: (ctx) => {
-    // Local state
-    const isEditing = FxWeb.useState(false);
-    
-    return {
-      state: { isEditing },
-      methods: {
-        toggleEdit: () => {
-          isEditing.set(!isEditing.get());
-        }
-      }
-    };
-  },
-  
-  render: (ctx) => {
-    const userId = FxWeb.attr(ctx.element, 'user-id');
-    
-    return (
-      <div class="user-profile">
-        <h2>User Profile</h2>
-        
-        {/* Local interactivity */}
-        <button onclick={ctx.toggleEdit}>
-          {ctx.isEditing.get() ? 'Cancel' : 'Edit Profile'}
-        </button>
-        
-        {/* Server-driven content with HTMX */}
-        <div 
-          hx-get={`/api/users/${userId}`}
-          hx-trigger="load"
-          hx-swap="innerHTML"
-        >
-          Loading user data...
-        </div>
-        
-        {ctx.isEditing.get() && (
-          <form
-            class="edit-form"
-            hx-put={`/api/users/${userId}`}
-            hx-swap="outerHTML"
-          >
-            <input type="text" name="name" placeholder="Name" />
-            <input type="email" name="email" placeholder="Email" />
-            <button type="submit">Save</button>
-          </form>
-        )}
-      </div>
-    );
-  },
-  
-  attributes: ['user-id']
-});
-```
-
-### 3. Use Shadow DOM with HTMX (Optional)
-
-For encapsulation, you can use Shadow DOM with HTMX:
-
-```javascript
-FxWeb.htmx.component({
-  tag: 'shadow-counter',
-  shadowMode: 'open', // Use Shadow DOM
+  tag: 'my-counter',
   
   setup: (ctx) => {
     const count = FxWeb.useState(0);
@@ -148,29 +73,48 @@ FxWeb.htmx.component({
   
   render: (ctx) => (
     <div>
-      <style>
-        {`
-          .counter { padding: 1rem; border: 1px solid #ccc; }
-          .count { font-size: 2rem; font-weight: bold; }
-          button { background: blue; color: white; border: none; padding: 0.5rem 1rem; }
-        `}
-      </style>
-      
-      <div class="counter">
-        <div class="count">{ctx.count.get()}</div>
-        
-        <button onclick={ctx.increment}>Local Increment</button>
-        
-        <div>
-          <button 
-            hx-post="/api/increment"
-            hx-target="previous div"
-            hx-swap="innerHTML"
-          >
-            Server Increment
-          </button>
-        </div>
+      <div>Count: {ctx.count.get()}</div>
+      <button onclick={ctx.increment}>Increment</button>
+    </div>
+  )
+});
+```
+
+### HTMX Integration
+
+```javascript
+FxWeb.htmx.component({
+  tag: 'server-counter',
+  
+  setup: (ctx) => {
+    return {
+      methods: {
+        resetCounter: () => {
+          if (window.htmx) {
+            window.htmx.ajax('POST', '/api/counter/reset', {
+              target: '#counter-value',
+              swap: 'innerHTML'
+            });
+          }
+        }
+      }
+    };
+  },
+  
+  render: (ctx) => (
+    <div>
+      <div id="counter-value" hx-get="/api/counter/value" hx-trigger="load">
+        Loading...
       </div>
+      
+      <button 
+        hx-post="/api/counter/increment" 
+        hx-target="#counter-value"
+      >
+        Increment
+      </button>
+      
+      <button onclick={ctx.resetCounter}>Reset</button>
     </div>
   )
 });
@@ -178,12 +122,11 @@ FxWeb.htmx.component({
 
 ## HTMX Events
 
-FxWeb can listen to HTMX events for enhanced integration:
+FeexWeb can listen to HTMX events for enhanced integration:
 
 ```javascript
 // Listen for HTMX events
 document.body.addEventListener('htmx:afterSwap', (event) => {
-  // Process new content
   console.log('Content swapped', event.detail.elt);
 });
 
@@ -230,187 +173,6 @@ FxWeb.component({
 });
 ```
 
-## Advanced Techniques
-
-### 1. Server Response Patterns
-
-For HTMX responses, your server should return HTML fragments. Here's an example with Express:
-
-```javascript
-app.get('/api/users/:id', (req, res) => {
-  const userId = req.params.id;
-  
-  // Check if it's an HTMX request
-  const isHtmx = req.headers['hx-request'] === 'true';
-  
-  if (isHtmx) {
-    // For HTMX, return HTML
-    res.send(`
-      <div class="user-data">
-        <h3>User ${userId}</h3>
-        <p>Name: John Doe</p>
-        <p>Email: john@example.com</p>
-      </div>
-    `);
-  } else {
-    // For regular API requests, return JSON
-    res.json({
-      id: userId,
-      name: 'John Doe',
-      email: 'john@example.com'
-    });
-  }
-});
-```
-
-### 2. Combining Client and Server State
-
-A powerful pattern is to sync server state with client state:
-
-```javascript
-FxWeb.component({
-  tag: 'synced-counter',
-  
-  setup: (ctx) => {
-    // Local state that mirrors server state
-    const count = FxWeb.useState(0);
-    
-    // Effect to sync with server periodically
-    const syncWithServer = () => {
-      const interval = setInterval(() => {
-        if (window.htmx) {
-          window.htmx.ajax('GET', '/api/counter', {
-            handler: (html) => {
-              // Parse server value and update local state
-              const value = parseInt(html, 10);
-              count.set(value);
-            }
-          });
-        }
-      }, 5000); // Every 5 seconds
-      
-      return () => clearInterval(interval);
-    };
-    
-    return {
-      state: { count },
-      methods: {
-        increment: () => {
-          // Update local state immediately for responsiveness
-          count.set(count.get() + 1);
-          
-          // Then sync with server
-          if (window.htmx) {
-            window.htmx.ajax('POST', '/api/counter/increment');
-          }
-        }
-      },
-      effects: [syncWithServer]
-    };
-  },
-  
-  render: (ctx) => (
-    <div>
-      <div class="count">{ctx.count.get()}</div>
-      <button onclick={ctx.increment}>Increment</button>
-    </div>
-  )
-});
-```
-
-### 3. Forms and Validation
-
-HTMX works great with forms, and FxWeb can add client-side validation:
-
-```javascript
-FxWeb.component({
-  tag: 'validated-form',
-  
-  setup: (ctx) => {
-    const errors = FxWeb.useState({});
-    const isSubmitting = FxWeb.useState(false);
-    
-    return {
-      state: {
-        errors,
-        isSubmitting
-      },
-      methods: {
-        validate: (ctx, event) => {
-          const form = event.target;
-          const name = form.name.value;
-          const email = form.email.value;
-          
-          // Clear previous errors
-          errors.set({});
-          
-          // Validate fields
-          let hasErrors = false;
-          let newErrors = {};
-          
-          if (!name || name.length < 2) {
-            newErrors.name = 'Name must be at least 2 characters';
-            hasErrors = true;
-          }
-          
-          if (!email || !email.includes('@')) {
-            newErrors.email = 'Please enter a valid email';
-            hasErrors = true;
-          }
-          
-          errors.set(newErrors);
-          
-          // Prevent form submission if there are errors
-          if (hasErrors) {
-            event.preventDefault();
-            return false;
-          }
-          
-          // Show submitting state
-          isSubmitting.set(true);
-          return true;
-        },
-        
-        // Reset form after submission
-        resetForm: (ctx) => {
-          errors.set({});
-          isSubmitting.set(false);
-        }
-      }
-    };
-  },
-  
-  render: (ctx) => (
-    <form 
-      hx-post="/api/register" 
-      hx-swap="outerHTML"
-      onsubmit={ctx.validate}
-      hx-on:htmx:after-request={ctx.resetForm}
-    >
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" />
-        {ctx.errors.get().name && (
-          <div class="error">{ctx.errors.get().name}</div>
-        )}
-      </div>
-      
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" />
-        {ctx.errors.get().email && (
-          <div class="error">{ctx.errors.get().email}</div>
-        )}
-      </div>
-      
-      <button type="submit" disabled={ctx.isSubmitting.get()}>
-        {ctx.isSubmitting.get() ? 'Submitting...' : 'Register'}
-      </button>
-    </form>
-  )
-});
-```
-
 ## Best Practices
 
 1. **Use attributes for configuration**: Make components configurable with attributes.
@@ -422,9 +184,6 @@ FxWeb.component({
 7. **Avoid shadow DOM for HTMX-heavy components**: Shadow DOM can complicate HTMX targeting.
 8. **Process HTMX after DOM updates**: Use `htmx.process` after manual DOM manipulation.
 
-By combining FxWeb's functional components with HTMX's server-driven updates, you can build web applications that are fast, maintainable, and user-friendly.
-
 ## Resources
 
 - [HTMX Documentation](https://htmx.org/docs/)
-- [WebJSX GitHub](https://github.com/webjsx/webjsx)
