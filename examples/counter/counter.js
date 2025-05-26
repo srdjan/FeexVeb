@@ -1,247 +1,261 @@
 /**
- * HTMX Counter Example
+ * FeexVeb Component Definitions
  *
- * This example demonstrates using FeexVeb with HTMX to create a hybrid application
- * that uses both client-side reactivity and server-driven updates.
- *
- * This example also showcases the default monospace styling for components.
+ * This file contains only component definitions that render as fragments
+ * within the server-provided layout. All styling comes from FeexVeb's
+ * built-in monospace design system.
  */
 import FeexVeb from "../../lib/feexveb.js";
-FeexVeb.component({
-  tag: 'fx-counter',
-  shadowMode: 'open', // Enable shadow DOM to use monospace styles
-  useMonospaceStyles: true, // Explicitly enable monospace styles (default is true)
 
+// 1. Full-featured counter with simplified API
+FeexVeb.component({
+  tag: 'fx-counter-simple',
+
+  // Declarative state definition
+  state: {
+    count: 0  // Initial value, will be overridden by 'initial-count' attribute
+  },
+
+  // Declarative computed state with direct state access
+  computed: {
+    isEven: (state) => state.count % 2 === 0
+  },
+
+  // Declarative methods with direct state access
+  methods: {
+    increment: (state) => state.count++,
+    decrement: (state) => state.count--,
+    reset: (state) => {
+      // Reset to initial-count attribute value if available
+      const initialCount = parseInt(state.element?.getAttribute('initial-count') || '0');
+      state.count = initialCount;
+    }
+  },
+
+  // Declarative attributes with automatic type inference and defaults
+  attrs: {
+    'title': { type: 'string', default: 'Counter' },
+    'initial-count': { type: 'number', default: 0 }
+  },
+
+  // Custom setup to initialize count from attribute
+  setup: (ctx) => {
+    const initialCount = parseInt(ctx.element.getAttribute('initial-count') || '0');
+    ctx.states.count.set(initialCount);
+
+    return {};
+  },
+
+  // Simplified render function using only FeexVeb monospace classes
+  render: ({ count, isEven, increment, decrement, reset, title }) => {
+    const valueClass = isEven ? 'counter-value even' : 'counter-value odd';
+
+    return (
+      <div>
+        <h3 class="counter-title">{title}</h3>
+        <div class={valueClass}>{count}</div>
+        <div class="counter-controls">
+          <button class="counter-btn decrement" onclick={decrement}>Decrement</button>
+          <button class="counter-btn" onclick={increment}>Increment</button>
+          <button class="counter-btn reset" onclick={reset}>Reset</button>
+        </div>
+      </div>
+    );
+  }
+});
+
+// 2. Minimal counter (bare minimum code)
+FeexVeb.component({
+  tag: 'fx-simple-counter',
+
+  state: {
+    count: 0
+  },
+
+  methods: {
+    increment: (state) => state.count++
+  },
+
+  render: ({ count, increment }) => (
+    <div>
+      <div class="counter-value">{count}</div>
+      <div class="counter-controls">
+        <button class="counter-btn" onclick={increment}>Increment</button>
+      </div>
+    </div>
+  )
+});
+
+// 3. Hybrid counter: Server + client with HTMX integration
+FeexVeb.component({
+  tag: 'fx-hybrid-counter',
+
+  // Minimal client-side state for optimistic updates and UI feedback
+  state: {
+    isLoading: false,
+    lastAction: '',
+    optimisticCount: null  // For optimistic updates while server request is pending
+  },
+
+  // Computed state for UI feedback
+  computed: {
+    displayCount: (state) => state.optimisticCount !== null ? state.optimisticCount : 'Synced',
+    statusMessage: (state) => {
+      if (state.isLoading) return `${state.lastAction}...`;
+      if (state.lastAction) return `Last action: ${state.lastAction}`;
+      return 'Ready';
+    }
+  },
+
+  // Client-side methods for optimistic updates and HTMX helpers
+  methods: {
+    // Optimistic increment - updates UI immediately while server request is pending
+    optimisticIncrement: (state) => {
+      state.isLoading = true;
+      state.lastAction = 'Incrementing';
+      if (state.optimisticCount !== null) {
+        state.optimisticCount++;
+      }
+    },
+
+    // Optimistic decrement
+    optimisticDecrement: (state) => {
+      state.isLoading = true;
+      state.lastAction = 'Decrementing';
+      if (state.optimisticCount !== null) {
+        state.optimisticCount--;
+      }
+    },
+
+    // Reset optimistic state when server responds
+    onServerResponse: (state) => {
+      state.isLoading = false;
+      state.optimisticCount = null; // Server response will update the actual display
+    },
+
+    // Handle server errors
+    onServerError: (state) => {
+      state.isLoading = false;
+      state.lastAction = 'Error occurred';
+      state.optimisticCount = null;
+    }
+  },
+
+  // Custom setup for HTMX event handling
   setup: (ctx) => {
     const element = ctx.element;
 
-    // Get initial values from attributes
-    const initialCount = FeexVeb.numAttr(element, 'initial-count', 0);
+    // Listen for HTMX events to coordinate client-side state with server responses
+    const handleBeforeRequest = (event) => {
+      // Extract action from the request URL
+      const url = event.detail.requestConfig.path;
+      if (url.includes('increment')) {
+        ctx.optimisticIncrement();
+      } else if (url.includes('decrement')) {
+        ctx.optimisticDecrement();
+      } else if (url.includes('reset')) {
+        ctx.states.isLoading.set(true);
+        ctx.states.lastAction.set('Resetting');
+        ctx.states.optimisticCount.set(0);
+      }
+    };
 
-    // Create reactive state
-    const count = FeexVeb.useState(initialCount);
+    const handleAfterRequest = () => {
+      ctx.onServerResponse();
+    };
 
-    // Create computed state for even/odd
-    const isEven = FeexVeb.useComputed(
-      () => count.get() % 2 === 0,
-      [count]
-    );
+    const handleResponseError = () => {
+      ctx.onServerError();
+    };
 
-    // Subscribe to reset event
-    const resetListener = EventBus.subscribe('counters:reset-all', () => {
-      count.set(initialCount);
-    });
+    // Listen for HTMX events on this component
+    element.addEventListener('htmx:beforeRequest', handleBeforeRequest);
+    element.addEventListener('htmx:afterRequest', handleAfterRequest);
+    element.addEventListener('htmx:responseError', handleResponseError);
 
     return {
-      state: {
-        count,
-        isEven
-      },
-      methods: {
-        increment: () => {
-          count.set(count.get() + 1);
-        },
-        decrement: () => {
-          count.set(count.get() - 1);
-        },
-        reset: () => {
-          count.set(initialCount);
-        }
-      },
       effects: [
-        resetListener
+        () => {
+          element.removeEventListener('htmx:beforeRequest', handleBeforeRequest);
+          element.removeEventListener('htmx:afterRequest', handleAfterRequest);
+          element.removeEventListener('htmx:responseError', handleResponseError);
+        }
       ]
     };
   },
 
-  render: (ctx) => {
-    const element = ctx.element;
-    const title = FeexVeb.attr(element, 'title', 'Counter');
-    const valueClass = ctx.isEven.get() ? 'counter-value even' : 'counter-value odd';
-
-    return (
-      <div class="container">
-        <h2>{title}</h2>
-
-        <div class={valueClass}>
-          {ctx.count.get()}
-        </div>
-
-        <div>
-          <button class="counter-btn" onclick={ctx.decrement}>
-            Decrement
-          </button>
-
-          <button class="counter-btn" onclick={ctx.increment}>
-            Increment
-          </button>
-
-          <button class="counter-btn" onclick={ctx.reset}>
-            Reset
-          </button>
-        </div>
-
-        {/* HTMX-powered server counter */}
-        <div>
-          <h3>Server-side Counter</h3>
-          <p>This part is powered by HTMX and the server:</p>
-
-          <div id="server-counter-value">
-            Current value: 0
-          </div>
-
-          <div>
-            <button
-              hx-post="/api/counter/decrement"
-              hx-target="#server-counter-value"
-              hx-swap="innerHTML"
-            >
-              Decrement (Server)
-            </button>
-
-            <button
-              hx-post="/api/counter/increment"
-              hx-target="#server-counter-value"
-              hx-swap="innerHTML"
-            >
-              Increment (Server)
-            </button>
-
-            <button
-              hx-post="/api/counter/reset"
-              hx-target="#server-counter-value"
-              hx-swap="innerHTML"
-            >
-              Reset (Server)
-            </button>
-          </div>
-
-          <div>
-            <button
-              hx-get="/api/counter/sync"
-              hx-target="#server-counter-value"
-              hx-swap="innerHTML"
-              hx-trigger="every 2s"
-            >
-              Sync with Server
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  },
-
-  attributes: ['title', 'initial-count']
-});
-
-// Create a hybrid app component
-FeexVeb.htmx.component({
-  tag: 'fx-htmx-app',
-
-  setup: (ctx) => {
-    return {
-      methods: {
-        resetAllCounters: () => {
-          EventBus.dispatch('counters:reset-all');
-
-          // Also reset server counter via HTMX
-          if (window.htmx) {
-            window.htmx.ajax('POST', '/api/counter/reset', {
-              target: '#server-counter-value',
-              swap: 'innerHTML'
-            });
-          }
-        }
-      }
-    };
-  },
-
-  render: (ctx) => {
-    return (
+  render: ({ displayCount, statusMessage, isLoading }) => (
+    <div>
       <div>
-        <h1>FeexVeb with HTMX Example</h1>
-
-        <p>
-          This example demonstrates how to use FeexVeb with HTMX to create
-          a hybrid application that uses both client-side reactivity and
-          server-driven updates.
-        </p>
-
-        <div class="counter-controls">
-          <button class="counter-btn reset" onclick={ctx.resetAllCounters}>
-            Reset All Counters
-          </button>
-        </div>
-
-        <fx-counter title="Local Counter" initial-count="0"></fx-counter>
-
-        <div class="counter-component">
-          <h2 class="counter-title">Pure HTMX Counter</h2>
-
-          <div id="htmx-counter">
-            <div class="counter-value" hx-get="/api/counter/value" hx-trigger="load"></div>
-
-            <div class="counter-controls">
-              <button
-                class="counter-btn decrement"
-                hx-post="/api/counter/decrement"
-                hx-target="#htmx-counter"
-                hx-swap="innerHTML"
-              >
-                Decrement
-              </button>
-
-              <button
-                class="counter-btn"
-                hx-post="/api/counter/increment"
-                hx-target="#htmx-counter"
-                hx-swap="innerHTML"
-              >
-                Increment
-              </button>
-
-              <button
-                class="counter-btn reset"
-                hx-post="/api/counter/reset"
-                hx-target="#htmx-counter"
-                hx-swap="innerHTML"
-              >
-                Reset
-              </button>
-            </div>
-          </div>
+        <h4>Server Value:</h4>
+        <div
+          id="server-value"
+          class="counter-value"
+          hx-get="/api/counter/value"
+          hx-trigger="load"
+        >
+          Loading...
         </div>
       </div>
-    );
-  }
+
+      <div>
+        <h4>Optimistic Preview:</h4>
+        <div class="counter-value">{displayCount}</div>
+        <p><small>Status: {statusMessage}</small></p>
+      </div>
+
+      <div class="counter-controls">
+        <button
+          class="counter-btn decrement"
+          hx-post="/api/counter/decrement"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Decrement
+        </button>
+
+        <button
+          class="counter-btn"
+          hx-post="/api/counter/increment"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Increment
+        </button>
+
+        <button
+          class="counter-btn reset"
+          hx-post="/api/counter/reset"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Reset
+        </button>
+      </div>
+
+      <div>
+        <button
+          hx-get="/api/counter/value"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          hx-trigger="every 5s"
+          class="counter-btn"
+        >
+          Auto-sync (5s)
+        </button>
+      </div>
+    </div>
+  )
 });
 
-// Initialize HTMX and the application
-const init = async () => {
-  // Add styles
-  addStyles();
-
-  // Initialize HTMX
-  try {
-    await FeexVeb.htmx.init({
-      defaultSwapStyle: 'innerHTML',
-      historyCacheSize: 10,
-      scrollIntoViewOnBoost: true
-    });
-
-    console.log('HTMX initialized successfully');
-  } catch (error) {
-    console.error('Failed to initialize HTMX:', error);
+// Initialize HTMX for the hybrid counter
+try {
+  if (globalThis.htmx) {
+    console.log('HTMX is available for hybrid counter functionality');
   }
-
-  // Render the app
-  const root = document.getElementById('app') || document.body;
-  FeexVeb.render(root, <fx-htmx-app></fx-htmx-app>);
-};
-
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+} catch (error) {
+  console.warn('HTMX not available:', error);
 }

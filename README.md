@@ -14,9 +14,24 @@ It was created during a one-hour vibe coding session 😊 with Claude. Simply am
 ### Installation
 
 1. Clone the repository
-2. Navigate to an example directory: `cd examples/counter`
-3. Start the server: `deno run --allow-net --allow-read ../../server/server.ts`
-4. Open your browser to `http://localhost:8000`
+2. Start the development server:
+
+   ```bash
+   deno task dev
+   ```
+
+3. Open your browser to `http://localhost:8000`
+
+### Demo Features
+
+The single demo page (`/`) showcases all FeexVeb features:
+
+- **Pure client-side counter** - Simplified API with attributes and computed state
+- **Minimal counter** - Bare minimum code demonstration
+- **Hybrid counter** - Server + client with HTMX integration and optimistic updates
+- **Server-only counter** - Pure HTMX for comparison
+
+All components use FeexVeb's built-in monospace design system with no custom CSS required.
 
 ### Project Structure
 
@@ -56,11 +71,43 @@ Together, they create a powerful approach that offers:
 
 ## Creating Components
 
-### Basic Component
+FeexVeb offers two APIs for creating components: a **simplified API** for quick development and an **advanced API** for full control.
+
+### Simplified API (Recommended)
+
+The simplified API reduces boilerplate and makes state directly accessible:
 
 ```javascript
 FeexVeb.component({
   tag: 'my-counter',
+
+  // Declarative state definition
+  state: {
+    count: 0
+  },
+
+  // Declarative methods with direct state access
+  methods: {
+    increment: (state) => state.count++
+  },
+
+  // Direct state access in render (no .get() calls needed)
+  render: ({ count, increment }) => (
+    <div>
+      <div>Count: {count}</div>
+      <button onclick={increment}>Increment</button>
+    </div>
+  )
+});
+```
+
+### Advanced API (Full Control)
+
+For complex components requiring full control:
+
+```javascript
+FeexVeb.defineComponent({
+  tag: 'advanced-counter',
 
   setup: (ctx) => {
     const count = FeexVeb.useState(0);
@@ -82,13 +129,60 @@ FeexVeb.component({
 });
 ```
 
-### Component with Shadow DOM and Monospace Styling
+### Simplified API with Computed State and Attributes
 
 ```javascript
 FeexVeb.component({
-  tag: 'styled-counter',
-  shadowMode: 'open', // Enable shadow DOM
-  useMonospaceStyles: true, // Apply monospace styling (default is true)
+  tag: 'smart-counter',
+
+  // State with automatic attribute binding
+  state: {
+    count: 0  // Will be overridden by 'initial-count' attribute
+  },
+
+  // Computed state with automatic dependency tracking
+  computed: {
+    isEven: (state) => state.count % 2 === 0,
+    doubled: (state) => state.count * 2
+  },
+
+  // Methods with direct state access
+  methods: {
+    increment: (state) => state.count++,
+    decrement: (state) => state.count--,
+    reset: (state) => state.count = 0
+  },
+
+  // Automatic attribute handling with type inference
+  attrs: {
+    'title': { type: 'string', default: 'Smart Counter' },
+    'initial-count': { type: 'number', default: 0 },
+    'step': { type: 'number', default: 1 }
+  },
+
+  // Direct access to all state, computed values, methods, and attributes
+  render: ({ count, isEven, doubled, increment, decrement, reset, title, step }) => (
+    <div class="container">
+      <h2>{title}</h2>
+      <div class={isEven ? 'even' : 'odd'}>Count: {count}</div>
+      <div>Doubled: {doubled}</div>
+      <div>
+        <button onclick={decrement}>-{step}</button>
+        <button onclick={increment}>+{step}</button>
+        <button onclick={reset}>Reset</button>
+      </div>
+    </div>
+  )
+});
+```
+
+### Advanced API with Full Control
+
+```javascript
+FeexVeb.defineComponent({
+  tag: 'advanced-counter',
+  shadowMode: 'open',
+  useMonospaceStyles: true,
 
   setup: (ctx) => {
     const count = FeexVeb.useState(0);
@@ -103,7 +197,7 @@ FeexVeb.component({
 
   render: (ctx) => (
     <div class="container">
-      <h2>Monospace Styled Counter</h2>
+      <h2>Advanced Counter</h2>
       <div>Count: {ctx.count.get()}</div>
       <button onclick={ctx.increment}>Increment</button>
     </div>
@@ -111,45 +205,152 @@ FeexVeb.component({
 });
 ```
 
-### HTMX Integration
+### API Comparison
+
+| Feature | Simplified API | Advanced API |
+|---------|---------------|--------------|
+| **Boilerplate** | Minimal | More verbose |
+| **State Access** | Direct (`count`) | Method calls (`ctx.count.get()`) |
+| **State Definition** | Declarative object | Manual `useState()` calls |
+| **Computed State** | Declarative functions | Manual `useComputed()` calls |
+| **Methods** | Direct state access | Context parameter required |
+| **Attributes** | Automatic type inference | Manual attribute handling |
+| **Learning Curve** | Gentle | Steeper |
+| **Use Case** | Most components | Complex components with advanced needs |
+
+### When to Use Each API
+
+**Use Simplified API (`FeexVeb.component`) when:**
+
+- Building most components (recommended default)
+- You want minimal boilerplate
+- State management is straightforward
+- You prefer declarative patterns
+
+**Use Advanced API (`FeexVeb.defineComponent`) when:**
+
+- You need fine-grained control over component lifecycle
+- Complex state initialization is required
+- You're migrating existing components
+- You need advanced effect management
+
+### HTMX Integration (Hybrid Approach)
+
+The simplified API works seamlessly with HTMX for server-driven updates while maintaining client-side reactivity:
 
 ```javascript
-FeexVeb.htmx.component({
-  tag: 'server-counter',
+FeexVeb.component({
+  tag: 'hybrid-counter',
 
-  setup: (ctx) => {
-    return {
-      methods: {
-        resetCounter: () => {
-          if (window.htmx) {
-            window.htmx.ajax('POST', '/api/counter/reset', {
-              target: '#counter-value',
-              swap: 'innerHTML'
-            });
-          }
-        }
+  // Minimal client state for optimistic updates and UI feedback
+  state: {
+    isLoading: false,
+    lastAction: '',
+    optimisticCount: null
+  },
+
+  // Computed state for UI feedback
+  computed: {
+    statusMessage: (state) => {
+      if (state.isLoading) return `${state.lastAction}...`;
+      return 'Ready';
+    }
+  },
+
+  // Client-side methods for optimistic updates
+  methods: {
+    optimisticIncrement: (state) => {
+      state.isLoading = true;
+      state.lastAction = 'Incrementing';
+      if (state.optimisticCount !== null) {
+        state.optimisticCount++;
       }
+    },
+
+    onServerResponse: (state) => {
+      state.isLoading = false;
+      state.optimisticCount = null; // Server response updates actual display
+    }
+  },
+
+  // Custom setup for HTMX event coordination
+  setup: (ctx) => {
+    const element = ctx.element;
+
+    // Listen for HTMX events to coordinate client-side state
+    const handleBeforeRequest = (event) => {
+      const url = event.detail.requestConfig.path;
+      if (url.includes('increment')) {
+        ctx.optimisticIncrement();
+      }
+    };
+
+    const handleAfterRequest = () => {
+      ctx.onServerResponse();
+    };
+
+    element.addEventListener('htmx:beforeRequest', handleBeforeRequest);
+    element.addEventListener('htmx:afterRequest', handleAfterRequest);
+
+    return {
+      effects: [
+        () => {
+          element.removeEventListener('htmx:beforeRequest', handleBeforeRequest);
+          element.removeEventListener('htmx:afterRequest', handleAfterRequest);
+        }
+      ]
     };
   },
 
-  render: (ctx) => (
-    <div>
-      <div id="counter-value" hx-get="/api/counter/value" hx-trigger="load">
+  render: ({ statusMessage, isLoading, optimisticCount }) => (
+    <div class="hybrid-counter">
+      <h3>Hybrid Counter (Server + Client)</h3>
+
+      {/* Server-driven counter value */}
+      <div
+        id="server-value"
+        hx-get="/api/counter/value"
+        hx-trigger="load"
+      >
         Loading...
       </div>
 
+      {/* Client-side optimistic preview */}
+      <div class="optimistic-preview">
+        Preview: {optimisticCount !== null ? optimisticCount : 'Synced'}
+        <div class="status">{statusMessage}</div>
+      </div>
+
+      {/* HTMX-powered buttons with optimistic updates */}
       <button
         hx-post="/api/counter/increment"
-        hx-target="#counter-value"
+        hx-target="#server-value"
+        hx-swap="innerHTML"
+        disabled={isLoading}
       >
-        Increment
+        Increment (Server)
       </button>
 
-      <button onclick={ctx.resetCounter}>Reset</button>
+      <button
+        hx-post="/api/counter/reset"
+        hx-target="#server-value"
+        hx-swap="innerHTML"
+        disabled={isLoading}
+      >
+        Reset (Server)
+      </button>
     </div>
   )
 });
 ```
+
+This hybrid approach demonstrates:
+
+- **Server as source of truth**: All mutations go through server endpoints
+- **Optimistic updates**: UI updates immediately for better user experience
+- **HTMX integration**: Declarative server communication with `hx-*` attributes
+- **Client-side reactivity**: Loading states and status messages
+- **Event coordination**: HTMX events trigger client-side state updates
 
 ## State Management
 
