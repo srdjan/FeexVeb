@@ -3,80 +3,19 @@
  * 
  * This example demonstrates using FxWeb with HTMX to create a hybrid application
  * that uses both client-side reactivity and server-driven updates.
+ * 
+ * This example also showcases the default monospace styling for components.
  */
 import FxWeb from "../../lib/feexweb.js";
 
-// Add styles for the application
-const addStyles = () => {
-  const style = document.createElement('style');
-  style.textContent = `
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    
-    .counter-component {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      margin: 1rem 0;
-    }
-    
-    .counter-title {
-      margin-top: 0;
-      color: #2c3e50;
-    }
-    
-    .counter-value {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 1rem 0;
-    }
-    
-    .counter-value.even { color: #3498db; }
-    .counter-value.odd { color: #e74c3c; }
-    
-    .counter-controls {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .counter-btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      background: #3498db;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    
-    .counter-btn:hover { background: #2980b9; }
-    .counter-btn.decrement { background: #e74c3c; }
-    .counter-btn.decrement:hover { background: #c0392b; }
-    .counter-btn.reset { background: #95a5a6; }
-    .counter-btn.reset:hover { background: #7f8c8d; }
-    
-    .counter-server {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #eee;
-    }
-  `;
-  document.head.appendChild(style);
-};
+// We'll remove the custom styles and rely on the default monospace styling
+// for components that use shadow DOM
 
-// Create a global event bus for communication between components
-const EventBus = FxWeb.createEventBus();
-
-// Register the Counter component with local state
+// Register the Counter component with local state and shadow DOM
 FxWeb.component({
   tag: 'fx-counter',
+  shadowMode: 'open', // Enable shadow DOM to use monospace styles
+  useMonospaceStyles: true, // Explicitly enable monospace styles (default is true)
 
   setup: (ctx) => {
     const element = ctx.element;
@@ -126,15 +65,15 @@ FxWeb.component({
     const valueClass = ctx.isEven.get() ? 'counter-value even' : 'counter-value odd';
 
     return (
-      <div class="counter-component">
-        <h2 class="counter-title">{title}</h2>
+      <div class="container">
+        <h2>{title}</h2>
 
         <div class={valueClass}>
           {ctx.count.get()}
         </div>
 
-        <div class="counter-controls">
-          <button class="counter-btn decrement" onclick={ctx.decrement}>
+        <div>
+          <button class="counter-btn" onclick={ctx.decrement}>
             Decrement
           </button>
 
@@ -142,13 +81,13 @@ FxWeb.component({
             Increment
           </button>
 
-          <button class="counter-btn reset" onclick={ctx.reset}>
+          <button class="counter-btn" onclick={ctx.reset}>
             Reset
           </button>
         </div>
 
         {/* HTMX-powered server counter */}
-        <div class="counter-server">
+        <div>
           <h3>Server-side Counter</h3>
           <p>This part is powered by HTMX and the server:</p>
 
@@ -156,9 +95,8 @@ FxWeb.component({
             Current value: 0
           </div>
 
-          <div class="counter-controls">
+          <div>
             <button
-              class="counter-btn decrement"
               hx-post="/api/counter/decrement"
               hx-target="#server-counter-value"
               hx-swap="innerHTML"
@@ -167,7 +105,6 @@ FxWeb.component({
             </button>
 
             <button
-              class="counter-btn"
               hx-post="/api/counter/increment"
               hx-target="#server-counter-value"
               hx-swap="innerHTML"
@@ -176,7 +113,6 @@ FxWeb.component({
             </button>
 
             <button
-              class="counter-btn reset"
               hx-post="/api/counter/reset"
               hx-target="#server-counter-value"
               hx-swap="innerHTML"
@@ -185,9 +121,8 @@ FxWeb.component({
             </button>
           </div>
 
-          <div class="counter-controls">
+          <div>
             <button
-              class="counter-btn"
               hx-get="/api/counter/sync"
               hx-target="#server-counter-value"
               hx-swap="innerHTML"

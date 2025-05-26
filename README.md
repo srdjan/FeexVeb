@@ -22,6 +22,7 @@ It was created during a one-hour vibe coding session 😊 with Claude. Simply am
 
 - `lib/feexweb.js` - Core library
 - `lib/src/` - Modular implementation files
+  - `lib/src/monospace-styles.js` - Default monospace styling system
 - `examples/` - Example implementations
 - `server/` - Deno HTTP server for examples
 
@@ -33,6 +34,7 @@ FeexWeb is a minimal library for building web applications with JSX and Web Comp
 - **State Management**: Reactive state with `useState` and `useComputed`
 - **Side Effects**: Manage effects with cleanup functions
 - **HTMX Integration**: Seamless integration with HTMX for server interactions
+- **Monospace Styling**: Default styling based on "The Monospace Web" design principles
 
 HTMX is a dependency-free JavaScript library that allows you to access modern browser features directly from HTML, rather than using JavaScript. It extends HTML with attributes like `hx-get`, `hx-post`, and `hx-swap` that allow you to make AJAX requests and update the page dynamically.
 
@@ -80,6 +82,35 @@ FxWeb.component({
 });
 ```
 
+### Component with Shadow DOM and Monospace Styling
+
+```javascript
+FxWeb.component({
+  tag: 'styled-counter',
+  shadowMode: 'open', // Enable shadow DOM
+  useMonospaceStyles: true, // Apply monospace styling (default is true)
+  
+  setup: (ctx) => {
+    const count = FxWeb.useState(0);
+    
+    return {
+      state: { count },
+      methods: {
+        increment: () => count.set(count.get() + 1)
+      }
+    };
+  },
+  
+  render: (ctx) => (
+    <div class="container">
+      <h2>Monospace Styled Counter</h2>
+      <div>Count: {ctx.count.get()}</div>
+      <button onclick={ctx.increment}>Increment</button>
+    </div>
+  )
+});
+```
+
 ### HTMX Integration
 
 ```javascript
@@ -118,6 +149,49 @@ FxWeb.htmx.component({
     </div>
   )
 });
+```
+
+## Styling Components
+
+FeexWeb provides a default monospace styling system based on "The Monospace Web" design principles. This styling is automatically applied to components that use Shadow DOM.
+
+### Using Default Monospace Styles
+
+```javascript
+// Enable shadow DOM with default monospace styling
+FxWeb.component({
+  tag: 'styled-component',
+  shadowMode: 'open', // Enable shadow DOM
+  useMonospaceStyles: true, // Apply monospace styling (default is true)
+  
+  // Component implementation...
+});
+```
+
+### Disabling Default Styles
+
+```javascript
+// Enable shadow DOM without default styling
+FxWeb.component({
+  tag: 'unstyled-component',
+  shadowMode: 'open',
+  useMonospaceStyles: false, // Disable default monospace styling
+  
+  // Component implementation...
+});
+```
+
+### Accessing Styling Utilities
+
+```javascript
+// Get the monospace CSS as a string
+const css = FxWeb.styling.monospaceCss;
+
+// Create a style element with monospace CSS
+const styleElement = FxWeb.styling.createMonospaceStyleElement();
+
+// Inject monospace styles into an element or shadow root
+FxWeb.styling.injectMonospaceStyles(element);
 ```
 
 ## HTMX Events
@@ -183,7 +257,10 @@ FxWeb.component({
 6. **Cache selectors**: Use `document.getElementById` once and store the reference.
 7. **Avoid shadow DOM for HTMX-heavy components**: Shadow DOM can complicate HTMX targeting.
 8. **Process HTMX after DOM updates**: Use `htmx.process` after manual DOM manipulation.
+9. **Use shadow DOM with monospace styling for UI components**: Get consistent, clean styling with minimal effort.
+10. **Disable default styling when needed**: Use `useMonospaceStyles: false` for components that need custom styling.
 
 ## Resources
 
 - [HTMX Documentation](https://htmx.org/docs/)
+- [The Monospace Web](https://owickstrom.github.io/the-monospace-web/) - Design principles for the default styling

@@ -1,6 +1,9 @@
 // Counter state (in a real app, this would be in a database)
 let counter = 0;
 
+// Import the FeexWeb library to access monospace styles
+import FxWeb from "../lib/feexweb.js";
+
 // Content types for different file extensions
 const CONTENT_TYPES = {
   ".html": "text/html",
@@ -191,130 +194,95 @@ async function requestHandler(req: Request): Promise<Response> {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Deno HTMX Counter</title>
+        <title>FeexWeb HTMX Counter - Monospace Design</title>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-          }
-          
-          .counter-component {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin: 1rem 0;
-          }
-          
-          .counter-title {
-            margin-top: 0;
-            color: #2c3e50;
-          }
-          
-          .counter-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 1rem 0;
-          }
-          
-          .counter-value.even { color: #3498db; }
-          .counter-value.odd { color: #e74c3c; }
-          
-          .counter-controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-          }
-          
-          .counter-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            background: #3498db;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-          }
-          
-          .counter-btn:hover { background: #2980b9; }
-          .counter-btn.decrement { background: #e74c3c; }
-          .counter-btn.decrement:hover { background: #c0392b; }
-          .counter-btn.reset { background: #95a5a6; }
-          .counter-btn.reset:hover { background: #7f8c8d; }
+          ${FxWeb.styling.monospaceCssForHtml}
         </style>
       </head>
       <body>
-        <h1>Deno HTMX Counter Example</h1>
-        
-        <p>This example demonstrates using HTMX with Deno's native HTTP server.</p>
-        
-        <div class="counter-component">
-          <h2 class="counter-title">Server-side Counter</h2>
-          
-          <div id="counter-value" hx-get="/api/counter/value" hx-trigger="load">
-            Loading...
+        <div class="container">
+          <h1>FeexWeb HTMX Counter Example</h1>
+
+          <p>This example demonstrates using HTMX with Deno's native HTTP server and FeexWeb's monospace design system.</p>
+
+          <div class="counter-component">
+            <h2 class="counter-title">Server-side Counter</h2>
+
+            <div id="counter-value" hx-get="/api/counter/value" hx-trigger="load">
+              Loading...
+            </div>
+
+            <div class="counter-controls">
+              <button
+                class="counter-btn decrement"
+                hx-post="/api/counter/decrement"
+                hx-target="#counter-value"
+              >
+                Decrement
+              </button>
+
+              <button
+                class="counter-btn"
+                hx-post="/api/counter/increment"
+                hx-target="#counter-value"
+              >
+                Increment
+              </button>
+
+              <button
+                class="counter-btn reset"
+                hx-post="/api/counter/reset"
+                hx-target="#counter-value"
+              >
+                Reset
+              </button>
+            </div>
           </div>
-          
-          <div class="counter-controls">
-            <button 
-              class="counter-btn decrement" 
-              hx-post="/api/counter/decrement" 
-              hx-target="#counter-value"
+
+          <div class="counter-component">
+            <h2 class="counter-title">Real-time Counter</h2>
+            <p>Updates every 2 seconds from the server</p>
+
+            <div
+              id="realtime-counter"
+              hx-get="/api/counter/value"
+              hx-trigger="load, every 2s"
             >
-              Decrement
-            </button>
-            
-            <button 
-              class="counter-btn" 
-              hx-post="/api/counter/increment" 
-              hx-target="#counter-value"
-            >
-              Increment
-            </button>
-            
-            <button 
-              class="counter-btn reset" 
-              hx-post="/api/counter/reset" 
-              hx-target="#counter-value"
-            >
-              Reset
-            </button>
+              Loading...
+            </div>
           </div>
-        </div>
-        
-        <div class="counter-component">
-          <h2 class="counter-title">Real-time Counter</h2>
-          <p>Updates every 2 seconds from the server</p>
-          
-          <div 
-            id="realtime-counter"
-            hx-get="/api/counter/value" 
-            hx-trigger="load, every 2s"
-          >
-            Loading...
+
+          <div class="counter-component">
+            <h2 class="counter-title">Out-of-band Counter Update</h2>
+            <p>Demonstrates how to update multiple elements at once</p>
+
+            <div id="counter-display">
+              Current value: <span id="counter-oob">Loading...</span>
+            </div>
+
+            <div class="counter-controls">
+              <button
+                class="counter-btn"
+                hx-post="/api/counter/oob"
+                hx-target="#counter-display"
+              >
+                Update All Counters
+              </button>
+            </div>
           </div>
-        </div>
-        
-        <div class="counter-component">
-          <h2 class="counter-title">Out-of-band Counter Update</h2>
-          <p>Demonstrates how to update multiple elements at once</p>
-          
-          <div id="counter-display">
-            Current value: <span id="counter-oob">Loading...</span>
-          </div>
-          
-          <div class="counter-controls">
-            <button 
-              class="counter-btn" 
-              hx-post="/api/counter/oob" 
-              hx-target="#counter-display"
-            >
-              Update All Counters
-            </button>
+
+          <div class="counter-component">
+            <h2 class="counter-title">About FeexWeb Monospace Design</h2>
+            <p>This page demonstrates the FeexWeb monospace design system, which follows "The Monospace Web" principles:</p>
+            <ul>
+              <li>Monospace typography for improved readability</li>
+              <li>Clean, minimal color scheme</li>
+              <li>Consistent spacing using CSS custom properties</li>
+              <li>Responsive design with mobile-first approach</li>
+              <li>Focus on content over decoration</li>
+            </ul>
+            <p>The counter values use monospace fonts and the library's color system to distinguish between even (blue) and odd (purple) values.</p>
           </div>
         </div>
       </body>
