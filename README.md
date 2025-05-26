@@ -59,11 +59,11 @@ Together, they create a powerful approach that offers:
 ### Basic Component
 
 ```javascript
-FxWeb.component({
+FeexVeb.component({
   tag: 'my-counter',
   
   setup: (ctx) => {
-    const count = FxWeb.useState(0);
+    const count = FeexVeb.useState(0);
     
     return {
       state: { count },
@@ -85,13 +85,13 @@ FxWeb.component({
 ### Component with Shadow DOM and Monospace Styling
 
 ```javascript
-FxWeb.component({
+FeexVeb.component({
   tag: 'styled-counter',
   shadowMode: 'open', // Enable shadow DOM
   useMonospaceStyles: true, // Apply monospace styling (default is true)
   
   setup: (ctx) => {
-    const count = FxWeb.useState(0);
+    const count = FeexVeb.useState(0);
     
     return {
       state: { count },
@@ -114,7 +114,7 @@ FxWeb.component({
 ### HTMX Integration
 
 ```javascript
-FxWeb.htmx.component({
+FeexVeb.htmx.component({
   tag: 'server-counter',
   
   setup: (ctx) => {
@@ -159,7 +159,7 @@ FeexVeb provides a default monospace styling system based on "The Monospace Web"
 
 ```javascript
 // Enable shadow DOM with default monospace styling
-FxWeb.component({
+FeexVeb.component({
   tag: 'styled-component',
   shadowMode: 'open', // Enable shadow DOM
   useMonospaceStyles: true, // Apply monospace styling (default is true)
@@ -172,7 +172,7 @@ FxWeb.component({
 
 ```javascript
 // Enable shadow DOM without default styling
-FxWeb.component({
+FeexVeb.component({
   tag: 'unstyled-component',
   shadowMode: 'open',
   useMonospaceStyles: false, // Disable default monospace styling
@@ -185,13 +185,13 @@ FxWeb.component({
 
 ```javascript
 // Get the monospace CSS as a string
-const css = FxWeb.styling.monospaceCss;
+const css = FeexVeb.styling.monospaceCss;
 
 // Create a style element with monospace CSS
-const styleElement = FxWeb.styling.createMonospaceStyleElement();
+const styleElement = FeexVeb.styling.createMonospaceStyleElement();
 
 // Inject monospace styles into an element or shadow root
-FxWeb.styling.injectMonospaceStyles(element);
+FeexVeb.styling.injectMonospaceStyles(element);
 ```
 
 ## HTMX Events
@@ -205,7 +205,7 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 });
 
 // Custom HTMX event handling in components
-FxWeb.component({
+FeexVeb.component({
   tag: 'data-loader',
   
   setup: (ctx) => {

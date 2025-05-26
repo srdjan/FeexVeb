@@ -1,7 +1,7 @@
 /**
  * HTMX Counter Example
  * 
- * This example demonstrates using FxWeb with HTMX to create a hybrid application
+ * This example demonstrates using FeexVeb with HTMX to create a hybrid application
  * that uses both client-side reactivity and server-driven updates.
  * 
  * This example also showcases the default monospace styling for components.
@@ -164,10 +164,10 @@ FeexVeb.htmx.component({
   render: (ctx) => {
     return (
       <div>
-        <h1>FxWeb with HTMX Example</h1>
+        <h1>FeexVeb with HTMX Example</h1>
 
         <p>
-          This example demonstrates how to use FxWeb with HTMX to create
+          This example demonstrates how to use FeexVeb with HTMX to create
           a hybrid application that uses both client-side reactivity and
           server-driven updates.
         </p>

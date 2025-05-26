@@ -2,7 +2,7 @@
 let counter = 0;
 
 // Import the FeexVeb library to access monospace styles
-import FxWeb from "../lib/feexveb.js";
+import FeexVeb from "../lib/feexveb.js";
 
 // Content types for different file extensions
 const CONTENT_TYPES = {
@@ -197,7 +197,7 @@ async function requestHandler(req: Request): Promise<Response> {
         <title>FeexVeb HTMX Counter - Monospace Design</title>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style>
-          ${FxWeb.styling.monospaceCssForHtml}
+          ${FeexVeb.styling.monospaceCssForHtml}
         </style>
       </head>
       <body>
