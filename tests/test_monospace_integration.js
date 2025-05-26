@@ -1,11 +1,11 @@
 /**
- * Test script to verify FeexWeb monospace styling integration
+ * Test script to verify FeexVeb monospace styling integration
  * This script tests that the monospace styles are properly exported and accessible
  */
 
-import FxWeb from "../lib/feexweb.js";
+import FxWeb from "../lib/feexveb.js";
 
-console.log("Testing FeexWeb monospace styling integration...\n");
+console.log("Testing FeexVeb monospace styling integration...\n");
 
 // Test 1: Check if styling namespace exists
 console.log("✓ Test 1: Styling namespace exists");
@@ -66,7 +66,7 @@ console.assert(htmlUsesBody, "HTML CSS should use 'body' selector");
 console.assert(shadowUsesHost, "Shadow CSS should use ':host' selector");
 console.assert(htmlCss !== shadowCss, "HTML CSS should be different from shadow CSS");
 
-console.log("\n🎉 All tests passed! FeexWeb monospace styling integration is working correctly.");
+console.log("\n🎉 All tests passed! FeexVeb monospace styling integration is working correctly.");
 console.log("\nThe counter server should now display with:");
 console.log("- Monospace typography throughout");
 console.log("- Clean, minimal design following 'The Monospace Web' principles");

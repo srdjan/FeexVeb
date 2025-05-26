@@ -6,13 +6,13 @@
  * 
  * This example also showcases the default monospace styling for components.
  */
-import FxWeb from "../../lib/feexweb.js";
+import FeexVeb from "../../lib/feexveb.js";
 
 // We'll remove the custom styles and rely on the default monospace styling
 // for components that use shadow DOM
 
 // Register the Counter component with local state and shadow DOM
-FxWeb.component({
+FeexVeb.component({
   tag: 'fx-counter',
   shadowMode: 'open', // Enable shadow DOM to use monospace styles
   useMonospaceStyles: true, // Explicitly enable monospace styles (default is true)
@@ -21,13 +21,13 @@ FxWeb.component({
     const element = ctx.element;
 
     // Get initial values from attributes
-    const initialCount = FxWeb.numAttr(element, 'initial-count', 0);
+    const initialCount = FeexVeb.numAttr(element, 'initial-count', 0);
 
     // Create reactive state
-    const count = FxWeb.useState(initialCount);
+    const count = FeexVeb.useState(initialCount);
 
     // Create computed state for even/odd
-    const isEven = FxWeb.useComputed(
+    const isEven = FeexVeb.useComputed(
       () => count.get() % 2 === 0,
       [count]
     );
@@ -61,7 +61,7 @@ FxWeb.component({
 
   render: (ctx) => {
     const element = ctx.element;
-    const title = FxWeb.attr(element, 'title', 'Counter');
+    const title = FeexVeb.attr(element, 'title', 'Counter');
     const valueClass = ctx.isEven.get() ? 'counter-value even' : 'counter-value odd';
 
     return (
@@ -140,7 +140,7 @@ FxWeb.component({
 });
 
 // Create a hybrid app component
-FxWeb.htmx.component({
+FeexVeb.htmx.component({
   tag: 'fx-htmx-app',
 
   setup: (ctx) => {
@@ -228,7 +228,7 @@ const init = async () => {
 
   // Initialize HTMX
   try {
-    await FxWeb.htmx.init({
+    await FeexVeb.htmx.init({
       defaultSwapStyle: 'innerHTML',
       historyCacheSize: 10,
       scrollIntoViewOnBoost: true
@@ -241,7 +241,7 @@ const init = async () => {
 
   // Render the app
   const root = document.getElementById('app') || document.body;
-  FxWeb.render(root, <fx-htmx-app></fx-htmx-app>);
+  FeexVeb.render(root, <fx-htmx-app></fx-htmx-app>);
 };
 
 // Initialize when DOM is ready

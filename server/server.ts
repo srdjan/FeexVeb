@@ -1,8 +1,8 @@
 // Counter state (in a real app, this would be in a database)
 let counter = 0;
 
-// Import the FeexWeb library to access monospace styles
-import FxWeb from "../lib/feexweb.js";
+// Import the FeexVeb library to access monospace styles
+import FxWeb from "../lib/feexveb.js";
 
 // Content types for different file extensions
 const CONTENT_TYPES = {
@@ -194,7 +194,7 @@ async function requestHandler(req: Request): Promise<Response> {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FeexWeb HTMX Counter - Monospace Design</title>
+        <title>FeexVeb HTMX Counter - Monospace Design</title>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style>
           ${FxWeb.styling.monospaceCssForHtml}
@@ -202,9 +202,9 @@ async function requestHandler(req: Request): Promise<Response> {
       </head>
       <body>
         <div class="container">
-          <h1>FeexWeb HTMX Counter Example</h1>
+          <h1>FeexVeb HTMX Counter Example</h1>
 
-          <p>This example demonstrates using HTMX with Deno's native HTTP server and FeexWeb's monospace design system.</p>
+          <p>This example demonstrates using HTMX with Deno's native HTTP server and FeexVeb's monospace design system.</p>
 
           <div class="counter-component">
             <h2 class="counter-title">Server-side Counter</h2>
@@ -273,8 +273,8 @@ async function requestHandler(req: Request): Promise<Response> {
           </div>
 
           <div class="counter-component">
-            <h2 class="counter-title">About FeexWeb Monospace Design</h2>
-            <p>This page demonstrates the FeexWeb monospace design system, which follows "The Monospace Web" principles:</p>
+            <h2 class="counter-title">About FeexVeb Monospace Design</h2>
+            <p>This page demonstrates the FeexVeb monospace design system, which follows "The Monospace Web" principles:</p>
             <ul>
               <li>Monospace typography for improved readability</li>
               <li>Clean, minimal color scheme</li>

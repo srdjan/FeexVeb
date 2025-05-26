@@ -20,7 +20,7 @@ It was created during a one-hour vibe coding session 😊 with Claude. Simply am
 
 ### Project Structure
 
-- `lib/feexweb.js` - Core library
+- `lib/feexveb.js` - Core library
 - `lib/src/` - Modular implementation files
   - `lib/src/monospace-styles.js` - Default monospace styling system
 - `examples/` - Example implementations

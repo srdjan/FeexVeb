@@ -6,7 +6,7 @@
 - To test the counter example: `cd examples/counter && deno run --allow-net --allow-read ../../server/server.ts`
 
 ## Project Structure
-- `lib/feexweb.js` - Core library
+- `lib/feexveb.js` - Core library
 - `lib/src/` - Modular implementation files
   - `lib/src/component.js` - Component definition system
   - `lib/src/state.js` - Reactive state management
