@@ -31,7 +31,7 @@ It was created during a one-hour vibe coding session 😊 with Claude. Simply am
 FeexVeb is a minimal library for building web applications with JSX and Web Components. It provides:
 
 - **Component Creation**: Define custom elements with reactive state
-- **State Management**: Reactive state with `useState` and `useComputed`
+- **State Management**: Reactive state with `useState` and `useComputed`, powered by Maverick.js Signals
 - **Side Effects**: Manage effects with cleanup functions
 - **HTMX Integration**: Seamless integration with HTMX for server interactions
 - **Monospace Styling**: Default styling based on "The Monospace Web" design principles
@@ -150,6 +150,127 @@ FeexVeb.htmx.component({
   )
 });
 ```
+
+## State Management
+
+FeexVeb's state management system is built on top of [Maverick.js Signals](https://github.com/maverick-js/signals), a high-performance reactive signals library. This provides automatic dependency tracking, efficient updates, and excellent performance while maintaining a simple, familiar API.
+
+### Basic State
+
+```javascript
+// Create reactive state
+const count = FeexVeb.useState(0);
+
+// Read state
+console.log(count.get()); // 0
+
+// Update state
+count.set(5);
+count.set(prev => prev + 1); // Function updates
+
+// Subscribe to changes
+const unsubscribe = count.subscribe((newValue) => {
+  console.log('Count changed to:', newValue);
+});
+
+// Cleanup
+unsubscribe();
+```
+
+### Computed State
+
+```javascript
+const firstName = FeexVeb.useState('John');
+const lastName = FeexVeb.useState('Doe');
+
+// Computed state automatically tracks dependencies
+const fullName = FeexVeb.useComputed(() => {
+  return `${firstName.get()} ${lastName.get()}`;
+}, [firstName, lastName]); // Dependencies array is optional with Maverick.js
+
+console.log(fullName.get()); // "John Doe"
+
+firstName.set('Jane');
+console.log(fullName.get()); // "Jane Doe" - automatically updated
+```
+
+### Effects
+
+```javascript
+const user = FeexVeb.useState(null);
+
+// Effect runs when dependencies change
+const cleanup = FeexVeb.useEffect(() => {
+  console.log('User changed:', user.get());
+
+  // Optional cleanup function
+  return () => {
+    console.log('Cleaning up previous effect');
+  };
+}, [user]);
+
+// Effect with no dependencies (runs once)
+const onceCleanup = FeexVeb.useEffect(() => {
+  console.log('This runs once');
+
+  return () => {
+    console.log('Cleanup on unmount');
+  };
+}, []); // Empty dependencies array
+
+// Manual cleanup
+cleanup();
+onceCleanup();
+```
+
+### State in Components
+
+```javascript
+FeexVeb.component({
+  tag: 'user-profile',
+
+  setup: (ctx) => {
+    const user = FeexVeb.useState({ name: 'John', age: 30 });
+    const isAdult = FeexVeb.useComputed(() => user.get().age >= 18, [user]);
+
+    // Effect for side effects
+    const logEffect = FeexVeb.useEffect(() => {
+      console.log('User updated:', user.get());
+    }, [user]);
+
+    return {
+      state: { user, isAdult },
+      methods: {
+        updateAge: (newAge) => {
+          user.set(prev => ({ ...prev, age: newAge }));
+        }
+      },
+      effects: [logEffect] // Cleanup handled automatically
+    };
+  },
+
+  render: (ctx) => (
+    <div>
+      <h2>{ctx.user.get().name}</h2>
+      <p>Age: {ctx.user.get().age}</p>
+      <p>Status: {ctx.isAdult.get() ? 'Adult' : 'Minor'}</p>
+      <button onclick={() => ctx.updateAge(ctx.user.get().age + 1)}>
+        Birthday
+      </button>
+    </div>
+  )
+});
+```
+
+### Benefits of Maverick.js Signals
+
+1. **Automatic Dependency Tracking** - No need to manually specify dependencies in most cases
+2. **High Performance** - Optimized for minimal re-computations and updates
+3. **Memory Efficient** - Automatic cleanup and garbage collection
+4. **Synchronous Updates** - Predictable update timing with `tick()` for batching
+5. **Battle Tested** - Used in production applications and media players
+
+The state system maintains full backward compatibility with existing FeexVeb components while providing these performance and developer experience improvements under the hood.
 
 ## Styling Components
 
