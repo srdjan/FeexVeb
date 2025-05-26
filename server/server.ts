@@ -1,10 +1,6 @@
-// Counter state (in a real app, this would be in a database)
 let counter = 0;
 
-// Import the FeexVeb library to access monospace styles
 import FeexVeb from "../lib/feexveb.js";
-
-// Content types for different file extensions
 const CONTENT_TYPES = {
   ".html": "text/html",
   ".js": "text/javascript",
@@ -17,9 +13,6 @@ const CONTENT_TYPES = {
   ".ico": "image/x-icon",
 };
 
-/**
- * Get the content type for a file based on its extension
- */
 function getContentType(path: string): string {
   for (const [ext, type] of Object.entries(CONTENT_TYPES)) {
     if (path.endsWith(ext)) {
@@ -29,30 +22,21 @@ function getContentType(path: string): string {
   return "text/plain";
 }
 
-/**
- * Serve a static file from the file system
- */
 async function serveFile(path: string): Promise<Response> {
   try {
-    // Remove leading slash and normalize path
     path = path.replace(/^\//, "");
-    // Default to index.html for root path
     if (path === "" || path === "/") {
       path = "index.html";
     }
-
-    // Try to read the file
     const file = await Deno.open(path, { read: true });
     const contentType = getContentType(path);
 
-    // Return the file as a streaming response
     return new Response(file.readable, {
       headers: {
         "content-type": contentType,
       },
     });
   } catch (e) {
-    // File not found or can't be read
     console.error(`Error serving file: ${path}`, e);
     return new Response("Not Found", { status: 404 });
   }
@@ -71,11 +55,8 @@ async function requestHandler(req: Request): Promise<Response> {
   // Check if it's an HTMX request
   const isHtmx = req.headers.get("HX-Request") === "true";
 
-  // Handle API requests
   if (path.startsWith("/api/")) {
-    // Counter API
     if (path === "/api/counter/value") {
-      // Get counter value
       const className = counter % 2 === 0 ? "counter-value even" : "counter-value odd";
 
       if (isHtmx) {
@@ -115,7 +96,6 @@ async function requestHandler(req: Request): Promise<Response> {
         );
       }
     } else if (path === "/api/counter/decrement" && method === "POST") {
-      // Decrement counter
       counter--;
 
       const className = counter % 2 === 0 ? "counter-value even" : "counter-value odd";
@@ -136,7 +116,6 @@ async function requestHandler(req: Request): Promise<Response> {
         );
       }
     } else if (path === "/api/counter/reset" && method === "POST") {
-      // Reset counter
       counter = 0;
 
       const className = counter % 2 === 0 ? "counter-value even" : "counter-value odd";
@@ -157,7 +136,6 @@ async function requestHandler(req: Request): Promise<Response> {
         );
       }
     } else if (path === "/api/counter/oob" && method === "POST") {
-      // Update all counter instances at once with out-of-band swaps
       counter++;
 
       const className = counter % 2 === 0 ? "counter-value even" : "counter-value odd";
@@ -182,11 +160,8 @@ async function requestHandler(req: Request): Promise<Response> {
       }
     }
 
-    // Unknown API endpoint
     return new Response("API Endpoint Not Found", { status: 404 });
   }
-
-  // Serve the main HTML page
   if (path === "/" || path === "/index.html") {
     return new Response(
       `<!DOCTYPE html>
@@ -293,13 +268,10 @@ async function requestHandler(req: Request): Promise<Response> {
     );
   }
 
-  // Try to serve a static file
   return await serveFile(path);
 }
 
-// Start the HTTP server
 const port = 8000;
 console.log(`HTTP server running at http://localhost:${port}/`);
 
-// Use the native Deno.serve API
 Deno.serve({ port }, requestHandler);

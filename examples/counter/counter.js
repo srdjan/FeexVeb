@@ -1,17 +1,12 @@
 /**
  * HTMX Counter Example
- * 
+ *
  * This example demonstrates using FeexVeb with HTMX to create a hybrid application
  * that uses both client-side reactivity and server-driven updates.
- * 
+ *
  * This example also showcases the default monospace styling for components.
  */
 import FeexVeb from "../../lib/feexveb.js";
-
-// We'll remove the custom styles and rely on the default monospace styling
-// for components that use shadow DOM
-
-// Register the Counter component with local state and shadow DOM
 FeexVeb.component({
   tag: 'fx-counter',
   shadowMode: 'open', // Enable shadow DOM to use monospace styles
