@@ -1,8 +1,8 @@
-# FeexWeb - Functional Web Components Library
+# FeexVeb - Functional Web Components Library
 
-## What is FeexWeb?
+## What is FeexVeb?
 
-FeexWeb is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use **FeexWeb** to create powerful web applications that combine client-side state management with server-driven HTML updates.
+FeexVeb is a minimal functional library for building web applications with JSX and Web Components. It uses HTMX for server-side driven reactivity. This guide explains how to use **FeexVeb** to create powerful web applications that combine client-side state management with server-driven HTML updates.
 
 It was created during a one-hour vibe coding session 😊 with Claude. Simply amazing what can be accomplished these days in a short time. Kudos to my sidekick 🙌
 
@@ -26,9 +26,9 @@ It was created during a one-hour vibe coding session 😊 with Claude. Simply am
 - `examples/` - Example implementations
 - `server/` - Deno HTTP server for examples
 
-## About FeexWeb and HTMX
+## About FeexVeb and HTMX
 
-FeexWeb is a minimal library for building web applications with JSX and Web Components. It provides:
+FeexVeb is a minimal library for building web applications with JSX and Web Components. It provides:
 
 - **Component Creation**: Define custom elements with reactive state
 - **State Management**: Reactive state with `useState` and `useComputed`
@@ -38,11 +38,11 @@ FeexWeb is a minimal library for building web applications with JSX and Web Comp
 
 HTMX is a dependency-free JavaScript library that allows you to access modern browser features directly from HTML, rather than using JavaScript. It extends HTML with attributes like `hx-get`, `hx-post`, and `hx-swap` that allow you to make AJAX requests and update the page dynamically.
 
-## Why Use FeexWeb with HTMX?
+## Why Use FeexVeb with HTMX?
 
-FeexWeb and HTMX complement each other perfectly:
+FeexVeb and HTMX complement each other perfectly:
 
-- **FeexWeb**: Provides client-side state management and component lifecycle, using a functional approach with custom elements.
+- **FeexVeb**: Provides client-side state management and component lifecycle, using a functional approach with custom elements.
 - **HTMX**: Provides HTML-driven server communication and page updates.
 
 Together, they create a powerful approach that offers:
@@ -153,7 +153,7 @@ FxWeb.htmx.component({
 
 ## Styling Components
 
-FeexWeb provides a default monospace styling system based on "The Monospace Web" design principles. This styling is automatically applied to components that use Shadow DOM.
+FeexVeb provides a default monospace styling system based on "The Monospace Web" design principles. This styling is automatically applied to components that use Shadow DOM.
 
 ### Using Default Monospace Styles
 
@@ -196,7 +196,7 @@ FxWeb.styling.injectMonospaceStyles(element);
 
 ## HTMX Events
 
-FeexWeb can listen to HTMX events for enhanced integration:
+FeexVeb can listen to HTMX events for enhanced integration:
 
 ```javascript
 // Listen for HTMX events

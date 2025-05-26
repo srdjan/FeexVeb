@@ -3,7 +3,7 @@
  * This script tests that the monospace styles are properly exported and accessible
  */
 
-import FxWeb from "./lib/feexweb.js";
+import FxWeb from "../lib/feexweb.js";
 
 console.log("Testing FeexWeb monospace styling integration...\n");
 
