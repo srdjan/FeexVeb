@@ -8,6 +8,18 @@
       "integrity": "sha512-/GO94awrwN9ROYZDMTeByordjvbhcm3CMvB/2aL/sEUy9Va8nM/2GmNgOOe+rrooTGnz8/DzO73xomuBRrnYWw=="
     }
   },
+  "redirects": {
+    "https://esm.sh/preact@%3E=10?target=denonext": "https://esm.sh/preact@10.26.7?target=denonext"
+  },
+  "remote": {
+    "https://esm.sh/preact-render-to-string@6.3.1": "d0c7107a8b8ebc52797986a6ac9d57e780cf956fdad498f2dee58745c263d541",
+    "https://esm.sh/preact-render-to-string@6.3.1/denonext/preact-render-to-string.mjs": "1f0e7b0aac1b9067fec288bb544b14beba78527fcf04f34fb02b098cb7fb5a6d",
+    "https://esm.sh/preact@10.19.3/denonext/jsx-runtime.mjs": "aea5aea2cbb469e705804ff24e94299564a9d1e89ba6d1b08757962d2320aab6",
+    "https://esm.sh/preact@10.19.3/denonext/preact.mjs": "050906b5fcc2e1703c3f58879378077191dbd58d5d415bcb8dcbc35c4fd0f5d9",
+    "https://esm.sh/preact@10.19.3/jsx-runtime": "c0a489946b2a492ed590365ce1dbb2606adef27635722687b7d6320f57faf435",
+    "https://esm.sh/preact@10.26.7/denonext/preact.mjs": "ad8c08b59c94425cd152de25c5129b59f522fba31a60fff33dced3cb1a86a6a5",
+    "https://esm.sh/preact@10.26.7?target=denonext": "6152322fa5931fd0463ab7e47838c2c690776bad89ca6db8330ddc6c9d376051"
+  },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",

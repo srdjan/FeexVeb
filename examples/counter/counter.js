@@ -50,14 +50,16 @@ FeexVeb.component({
   render: ({ count, isEven, increment, decrement, reset, title }) => {
     const valueClass = isEven ? 'counter-value even' : 'counter-value odd';
 
-    return FeexVeb.createElement('div', null,
-      FeexVeb.createElement('h3', { class: 'counter-title' }, title),
-      FeexVeb.createElement('div', { class: valueClass }, count),
-      FeexVeb.createElement('div', { class: 'counter-controls' },
-        FeexVeb.createElement('button', { class: 'counter-btn decrement', onclick: decrement }, 'Decrement'),
-        FeexVeb.createElement('button', { class: 'counter-btn', onclick: increment }, 'Increment'),
-        FeexVeb.createElement('button', { class: 'counter-btn reset', onclick: reset }, 'Reset')
-      )
+    return (
+      <div>
+        <h3 class="counter-title">{title}</h3>
+        <div class={valueClass}>{count}</div>
+        <div class="counter-controls">
+          <button class="counter-btn decrement" onclick={decrement}>Decrement</button>
+          <button class="counter-btn" onclick={increment}>Increment</button>
+          <button class="counter-btn reset" onclick={reset}>Reset</button>
+        </div>
+      </div>
     );
   }
 });
@@ -74,13 +76,14 @@ FeexVeb.component({
     increment: (state) => state.count++
   },
 
-  render: ({ count, increment }) =>
-    FeexVeb.createElement('div', null,
-      FeexVeb.createElement('div', { class: 'counter-value' }, count),
-      FeexVeb.createElement('div', { class: 'counter-controls' },
-        FeexVeb.createElement('button', { class: 'counter-btn', onclick: increment }, 'Increment')
-      )
-    )
+  render: ({ count, increment }) => (
+    <div>
+      <div class="counter-value">{count}</div>
+      <div class="counter-controls">
+        <button class="counter-btn" onclick={increment}>Increment</button>
+      </div>
+    </div>
+  )
 });
 
 // 3. Hybrid counter: Server + client with HTMX integration
@@ -181,62 +184,71 @@ FeexVeb.component({
     };
   },
 
-  render: ({ displayCount, statusMessage, isLoading }) =>
-    FeexVeb.createElement('div', null,
-      FeexVeb.createElement('div', null,
-        FeexVeb.createElement('h4', null, 'Server Value:'),
-        FeexVeb.createElement('div', {
-          id: 'server-value',
-          class: 'counter-value',
-          'hx-get': '/api/counter/value',
-          'hx-trigger': 'load'
-        }, 'Loading...')
-      ),
+  render: ({ displayCount, statusMessage, isLoading }) => (
+    <div>
+      <div>
+        <h4>Server Value:</h4>
+        <div
+          id="server-value"
+          class="counter-value"
+          hx-get="/api/counter/value"
+          hx-trigger="load"
+        >
+          Loading...
+        </div>
+      </div>
 
-      FeexVeb.createElement('div', null,
-        FeexVeb.createElement('h4', null, 'Optimistic Preview:'),
-        FeexVeb.createElement('div', { class: 'counter-value' }, displayCount),
-        FeexVeb.createElement('p', null,
-          FeexVeb.createElement('small', null, 'Status: ', statusMessage)
-        )
-      ),
+      <div>
+        <h4>Optimistic Preview:</h4>
+        <div class="counter-value">{displayCount}</div>
+        <p><small>Status: {statusMessage}</small></p>
+      </div>
 
-      FeexVeb.createElement('div', { class: 'counter-controls' },
-        FeexVeb.createElement('button', {
-          class: 'counter-btn decrement',
-          'hx-post': '/api/counter/decrement',
-          'hx-target': '#server-value',
-          'hx-swap': 'innerHTML',
-          disabled: isLoading
-        }, 'Decrement'),
+      <div class="counter-controls">
+        <button
+          class="counter-btn decrement"
+          hx-post="/api/counter/decrement"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Decrement
+        </button>
 
-        FeexVeb.createElement('button', {
-          class: 'counter-btn',
-          'hx-post': '/api/counter/increment',
-          'hx-target': '#server-value',
-          'hx-swap': 'innerHTML',
-          disabled: isLoading
-        }, 'Increment'),
+        <button
+          class="counter-btn"
+          hx-post="/api/counter/increment"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Increment
+        </button>
 
-        FeexVeb.createElement('button', {
-          class: 'counter-btn reset',
-          'hx-post': '/api/counter/reset',
-          'hx-target': '#server-value',
-          'hx-swap': 'innerHTML',
-          disabled: isLoading
-        }, 'Reset')
-      ),
+        <button
+          class="counter-btn reset"
+          hx-post="/api/counter/reset"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          disabled={isLoading}
+        >
+          Reset
+        </button>
+      </div>
 
-      FeexVeb.createElement('div', null,
-        FeexVeb.createElement('button', {
-          'hx-get': '/api/counter/value',
-          'hx-target': '#server-value',
-          'hx-swap': 'innerHTML',
-          'hx-trigger': 'every 5s',
-          class: 'counter-btn'
-        }, 'Auto-sync (5s)')
-      )
-    )
+      <div>
+        <button
+          hx-get="/api/counter/value"
+          hx-target="#server-value"
+          hx-swap="innerHTML"
+          hx-trigger="every 5s"
+          class="counter-btn"
+        >
+          Auto-sync (5s)
+        </button>
+      </div>
+    </div>
+  )
 });
 
 // Initialize HTMX for the hybrid counter
