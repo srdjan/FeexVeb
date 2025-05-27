@@ -170,6 +170,13 @@ async function requestHandler(req: Request): Promise<Response> {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>FeexVeb Demo - Simplified API & HTMX Integration</title>
+        <script type="importmap">
+        {
+          "imports": {
+            "@maverick-js/signals": "https://esm.sh/@maverick-js/signals@5.11.5"
+          }
+        }
+        </script>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <style>
           ${FeexVeb.styling.monospaceCssForHtml}
@@ -287,7 +294,7 @@ async function requestHandler(req: Request): Promise<Response> {
   return await serveFile(path);
 }
 
-const port = 8000;
+const port = 8001;
 console.log(`HTTP server running at http://localhost:${port}/`);
 
 Deno.serve({ port }, requestHandler);
