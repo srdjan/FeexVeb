@@ -46,7 +46,7 @@ FeexVeb.component({
     return {};
   },
 
-  // Simplified render function using only FeexVeb monospace classes
+  // Simplified render function using JSX syntax
   render: ({ count, isEven, increment, decrement, reset, title }) => {
     const valueClass = isEven ? 'counter-value even' : 'counter-value odd';
 

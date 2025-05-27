@@ -1,11 +1,16 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:@maverick-js/signals@^5.11.5": "5.11.5"
+    "npm:@maverick-js/signals@^5.11.5": "5.11.5",
+    "npm:mono-jsx@0.5": "0.5.0"
   },
   "npm": {
     "@maverick-js/signals@5.11.5": {
       "integrity": "sha512-/GO94awrwN9ROYZDMTeByordjvbhcm3CMvB/2aL/sEUy9Va8nM/2GmNgOOe+rrooTGnz8/DzO73xomuBRrnYWw=="
+    },
+    "mono-jsx@0.5.0": {
+      "integrity": "sha512-2w0stfS8sXRwFsJSjUMi52I2vyhqHgRVnpGVSUlXdkWsDgFtxuVvzv8dcVHqcctAW028wPu/67XaZ5JcetrQ0w==",
+      "bin": true
     }
   },
   "redirects": {
@@ -23,7 +28,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
-      "npm:@maverick-js/signals@^5.11.5"
+      "npm:@maverick-js/signals@^5.11.5",
+      "npm:mono-jsx@0.5"
     ]
   }
 }
