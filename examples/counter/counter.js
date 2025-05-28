@@ -9,7 +9,7 @@ import FeexVeb from "../../lib/feexveb.js";
 
 // 1. Full-featured counter with simplified API
 FeexVeb.component({
-  tag: 'fx-counter-simple',
+  tag: 'feex-counter', // Changed tag name to feex-counter
 
   // Declarative state definition
   state: {

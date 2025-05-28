@@ -1,12 +1,160 @@
+/** @jsxImportSource npm:mono-jsx */
+import { html } from "npm:mono-jsx"; // Required for dangerouslySetInnerHTML
+
 /**
  * Unified Home Page Layout - Consolidates all FeexVeb examples and documentation
  */
 
-export const UnifiedLayout = () => (
-  <div class="unified-layout">
-    {/* Navigation Header */}
-    <nav class="main-nav">
-      <div class="nav-container">
+// Modified to accept feexCounterSlotHtml and monospaceCss, and to render a full HTML document
+export const UnifiedLayout = ({ feexCounterSlotHtml, monospaceCss }) => (
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>FeexVeb - Modern Web Development with JSX, SSR & HTMX</title>
+      <script type="importmap">
+        {`{
+          "imports": {
+            "@maverick-js/signals": "https://esm.sh/@maverick-js/signals@5.11.5",
+            "mono-jsx": "https://esm.sh/mono-jsx@0.5.0"
+          }
+        }`}
+      </script>
+      <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+      <style dangerouslySetInnerHTML={{ __html: `
+        ${monospaceCss}
+
+        /* Unified Layout Styles (previously in server.ts) */
+        .unified-layout {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+        /* Navigation */
+        .main-nav {
+          position: sticky;
+          top: 0;
+          background: var(--mono-bg-primary);
+          border-bottom: 2px solid var(--mono-border-color);
+          z-index: 100;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 1rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .brand-title { margin: 0; font-size: 1.5rem; color: var(--mono-accent-color); }
+        .brand-tagline { font-size: 0.9rem; color: var(--mono-text-muted); font-weight: 500; }
+        .nav-menu { display: flex; gap: 2rem; }
+        .nav-link { text-decoration: none; color: var(--mono-text-primary); font-weight: 500; padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.2s ease; }
+        .nav-link:hover { background: var(--mono-bg-secondary); color: var(--mono-accent-color); }
+        /* Hero Section */
+        .hero-section { background: linear-gradient(135deg, var(--mono-bg-primary) 0%, var(--mono-bg-secondary) 100%); padding: 4rem 2rem; text-align: center; }
+        .hero-content { max-width: 1000px; margin: 0 auto; }
+        .hero-title { font-size: 3rem; margin-bottom: 1.5rem; line-height: 1.2; }
+        .highlight { color: var(--mono-accent-color); font-weight: bold; }
+        .hero-description { font-size: 1.2rem; color: var(--mono-text-muted); margin-bottom: 3rem; line-height: 1.6; }
+        .hero-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0; }
+        .feature-item { display: flex; align-items: center; gap: 1rem; padding: 1.5rem; background: var(--mono-bg-primary); border-radius: 8px; border: 1px solid var(--mono-border-color); }
+        .feature-icon { font-size: 2rem; }
+        .feature-text { text-align: left; }
+        .hero-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 3rem; }
+        .cta-button { padding: 1rem 2rem; text-decoration: none; border-radius: 6px; font-weight: bold; transition: all 0.2s ease; }
+        .cta-button.primary { background: var(--mono-accent-color); color: white; }
+        .cta-button.secondary { background: transparent; color: var(--mono-accent-color); border: 2px solid var(--mono-accent-color); }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        /* Section Styles */
+        .section-container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+        .section-title { font-size: 2.5rem; margin-bottom: 1rem; color: var(--mono-accent-color); text-align: center; }
+        .section-description { font-size: 1.1rem; color: var(--mono-text-muted); text-align: center; margin-bottom: 3rem; line-height: 1.6; }
+        /* About Section specific styles from unified-layout.jsx */
+        .about-section { background: var(--mono-bg-secondary); /* Example, ensure all specific styles are here or inherited */ }
+        .about-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; margin: 3rem 0; }
+        .about-intro { font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem; }
+        .philosophy-list { list-style: none; padding: 0; }
+        .philosophy-list li { margin: 1rem 0; padding-left: 1.5rem; position: relative; }
+        .philosophy-list li::before { content: "→"; position: absolute; left: 0; color: var(--mono-accent-color); font-weight: bold; }
+        .feature-card { background: var(--mono-bg-primary); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--mono-border-color); margin-bottom: 1rem; }
+        .feature-card h4 { margin-top: 0; color: var(--mono-accent-color); }
+        .code-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }
+        .code-block { background: var(--mono-bg-code); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--mono-border-color); }
+        .code-block h4 { margin-top: 0; margin-bottom: 1rem; }
+        .code-block pre { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+        /* Examples Grid */
+        .examples-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin: 3rem 0; }
+        .example-card { background: var(--mono-bg-primary); border: 1px solid var(--mono-border-color); border-radius: 8px; overflow: hidden; }
+        .example-header { padding: 1.5rem; border-bottom: 1px solid var(--mono-border-color); display: flex; justify-content: space-between; align-items: center; }
+        .example-title { margin: 0; color: var(--mono-accent-color); }
+        .example-badge { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .example-badge.client { background: #e3f2fd; color: #1976d2; }
+        .example-badge.minimal { background: #f3e5f5; color: #7b1fa2; }
+        .example-badge.hybrid { background: #fff3e0; color: #f57c00; }
+        .example-badge.server { background: #e8f5e8; color: #388e3c; }
+        .example-description { padding: 0 1.5rem; color: var(--mono-text-muted); }
+        .example-demo { padding: 1.5rem; background: var(--mono-bg-secondary); }
+        /* Components Section */
+        .components-grid { margin: 3rem 0; }
+        .component-category { margin: 4rem 0; padding: 2rem; background: var(--mono-bg-primary); border: 1px solid var(--mono-border-color); border-radius: 8px; }
+        .category-title { color: var(--mono-accent-color); margin-bottom: 1rem; }
+        .category-description { color: var(--mono-text-muted); margin-bottom: 2rem; }
+        .component-demos { display: grid; gap: 2rem; }
+        .component-demo { padding: 2rem; background: var(--mono-bg-secondary); border-radius: 6px; border: 1px solid var(--mono-border-color); }
+        .demo-title { margin-top: 0; margin-bottom: 1.5rem; color: var(--mono-accent-color); }
+        /* Docs Section */
+        .docs-section { background: var(--mono-bg-secondary); }
+        .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0; }
+        .doc-category { background: var(--mono-bg-primary); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--mono-border-color); }
+        .doc-category h3 { margin-top: 0; color: var(--mono-accent-color); }
+        .doc-links { list-style: none; padding: 0; }
+        .doc-links li { margin: 0.5rem 0; }
+        .doc-links a { color: var(--mono-text-primary); text-decoration: none; }
+        .doc-links a:hover { color: var(--mono-accent-color); }
+        .api-summary { margin: 3rem 0; padding: 2rem; background: var(--mono-bg-primary); border-radius: 8px; border: 1px solid var(--mono-border-color); }
+        .api-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin: 2rem 0; }
+        .api-example { background: var(--mono-bg-code); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--mono-border-color); }
+        .api-example h4 { margin-top: 0; color: var(--mono-accent-color); }
+        .api-example pre { margin: 0; font-size: 0.85rem; line-height: 1.4; }
+        /* Footer */
+        .main-footer { background: var(--mono-bg-primary); border-top: 2px solid var(--mono-border-color); margin-top: auto; }
+        .footer-content { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+        .footer-section h4 { color: var(--mono-accent-color); margin-bottom: 1rem; }
+        .footer-section ul { list-style: none; padding: 0; }
+        .footer-section li { margin: 0.5rem 0; }
+        .footer-section a { color: var(--mono-text-muted); text-decoration: none; }
+        .footer-section a:hover { color: var(--mono-accent-color); }
+        .footer-bottom { text-align: center; padding: 1rem 2rem; border-top: 1px solid var(--mono-border-color); color: var(--mono-text-muted); }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .nav-container { flex-direction: column; gap: 1rem; }
+          .nav-menu { gap: 1rem; }
+          .hero-title { font-size: 2rem; }
+          .hero-actions { flex-direction: column; align-items: center; }
+          .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+          .code-comparison { grid-template-columns: 1fr; }
+          .examples-grid { grid-template-columns: 1fr; }
+          .api-examples { grid-template-columns: 1fr; }
+        }
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        section { scroll-margin-top: 80px; /* Adjust based on nav height */ }
+        /* Component placeholder styles */
+        .component-placeholder { min-height: 200px; display: flex; align-items: center; justify-content: center; background: var(--mono-bg-secondary); border: 2px dashed var(--mono-border-color); border-radius: 8px; transition: all 0.3s ease; }
+        .loading-component { text-align: center; color: var(--mono-text-muted); }
+        .loading-spinner { font-size: 2rem; margin-bottom: 1rem; animation: spin 2s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-component p { margin: 0; font-style: italic; }
+      `}} />
+    </head>
+    <body>
+      <div class="unified-layout"> {/* This div wraps the visual content */}
+        {/* Navigation Header */}
+        <nav class="main-nav">
+          <div class="nav-container">
         <div class="nav-brand">
           <h1 class="brand-title">FeexVeb</h1>
           <span class="brand-tagline">JSX • SSR • HTMX</span>
@@ -214,33 +362,41 @@ export const UnifiedLayout = () => (
               state, and client-side reactivity.
             </p>
             <div class="example-demo">
-              <div
-                class="component-placeholder"
-                data-component="fx-counter-simple"
-                data-title="Simplified Counter"
-                data-initial-count="5"
-              >
-                <div class="loading-component">
-                  <div class="loading-spinner">⏳</div>
-                  <p>Loading Simplified Counter...</p>
+              {/* Use the slot for feex-counter.
+                  If feexCounterSlotHtml is provided, use it for SSR.
+                  Otherwise, fall back to the client-side placeholder for feex-counter. */}
+              {feexCounterSlotHtml ? (
+                <div dangerouslySetInnerHTML={{ __html: feexCounterSlotHtml }} />
+              ) : (
+                <div
+                  class="component-placeholder"
+                  data-component="feex-counter" // Changed from fx-counter-simple to feex-counter
+                  data-title="Demo Counter" // Adjusted title to be more generic for feex-counter
+                  data-initial-count="0"  // Adjusted initial-count
+                >
+                  <div class="loading-component">
+                    <div class="loading-spinner">⏳</div>
+                    <p>Loading Counter Component...</p> {/* Adjusted text */}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
+          {/* The following counter examples remain client-side rendered via placeholders */}
           <div class="example-card">
             <div class="example-header">
-              <h3 class="example-title">2. Minimal Counter</h3>
+              <h3 class="example-title">2. Minimal Counter (Client)</h3>
               <span class="example-badge minimal">Minimal</span>
             </div>
             <p class="example-description">
               Shows the absolute minimum code needed for a reactive component
-              with FeexVeb.
+              with FeexVeb (client-side).
             </p>
             <div class="example-demo">
               <div
                 class="component-placeholder"
-                data-component="fx-simple-counter"
+                data-component="fx-simple-counter" // This remains as is, not SSR'd for this task
               >
                 <div class="loading-component">
                   <div class="loading-spinner">⏳</div>
@@ -658,5 +814,68 @@ export const UnifiedLayout = () => (
         <p>&copy; 2024 FeexVeb. Built with ❤️ and modern web standards.</p>
       </div>
     </footer>
-  </div>
+  </div> {/* End of .unified-layout div */}
+
+    {/* Load all FeexVeb component definitions */}
+    <script type="module" src="/examples/counter/counter.js"></script>
+    <script type="module" src="/examples/components/todo-list.js"></script>
+    <script type="module" src="/examples/components/weather-widget.js"></script>
+    <script type="module" src="/examples/components/form-validation.js"></script>
+    <script type="module" src="/examples/components/data-table.js"></script>
+    <script type="module" src="/examples/components/chat.js"></script>
+
+    {/* Component placeholder replacement script */}
+    <script type="module" dangerouslySetInnerHTML={{ __html: `
+      // Wait for all components to be defined, then replace placeholders
+      function replaceComponentPlaceholders() {
+        const placeholders = document.querySelectorAll('.component-placeholder');
+
+        placeholders.forEach(placeholder => {
+          const componentTag = placeholder.dataset.component;
+
+          // Check if the custom element is defined
+          if (customElements.get(componentTag)) {
+            const componentElement = document.createElement(componentTag);
+
+            // Copy all data attributes as regular attributes
+            Object.keys(placeholder.dataset).forEach(key => {
+              if (key !== 'component') { // 'component' is not an actual attribute for the element
+                const attrName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                componentElement.setAttribute(attrName, placeholder.dataset[key]);
+              }
+            });
+
+            // Replace the placeholder with the actual component
+            placeholder.parentNode.replaceChild(componentElement, placeholder);
+            console.log(\`Replaced placeholder for \${componentTag}\`);
+          } else {
+            // console.warn(\`Custom element \${componentTag} not defined yet.\`);
+          }
+        });
+      }
+
+      // Try to replace placeholders immediately on script load
+      replaceComponentPlaceholders();
+
+      // Set up a MutationObserver to watch for new elements being added to the DOM,
+      // and also to retry for components that might define themselves later.
+      const observer = new MutationObserver((mutationsList, obs) => {
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            replaceComponentPlaceholders();
+            break; 
+          }
+        }
+        replaceComponentPlaceholders(); 
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Fallback attempts for components that might load with delay
+      setTimeout(replaceComponentPlaceholders, 100);
+      setTimeout(replaceComponentPlaceholders, 500);
+      setTimeout(replaceComponentPlaceholders, 1500);
+    `}} />
+  </body>
+</html>
 );
