@@ -86,9 +86,6 @@ async function requestHandler(req: Request): Promise<Response> {
       if (isHtmx) {
         return new Response(
           (<div class={className}>{counter}</div>).toString(),
-          (<div class={className}>{counter}</div>).toString(),
-          (<div class={className}>{counter}</div>).toString(),
-          (<div class={className}>{counter}</div>).toString(),
           {
             headers: { "Content-Type": "text/html" }
           }
@@ -109,7 +106,9 @@ async function requestHandler(req: Request): Promise<Response> {
 
       if (isHtmx) {
         return new Response(
-          `<div class="${className}">${counter}</div>`,
+          (<div class={className}>{counter}</div>).toString(),
+          (<div class={className}>{counter}</div>).toString(),
+          (<div class={className}>{counter}</div>).toString(),
           {
             headers: { "Content-Type": "text/html" }
           }
