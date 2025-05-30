@@ -1,6 +1,5 @@
 /** @jsxImportSource https://esm.sh/preact */
 import { render } from "https://esm.sh/preact-render-to-string@6.4.0";
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 
 // Import the simplified FeexVeb components
 import "../lib/src/feexveb.js";
@@ -319,4 +318,4 @@ const port = 8001;
 console.log(`Simplified FeexVeb server running at http://localhost:${port}/`);
 console.log(`Using native mono-jsx rendering and HTMX integration`);
 
-serve(handleRequest, { port });
+Deno.serve({ port }, handleRequest);
