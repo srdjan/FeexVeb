@@ -13,7 +13,7 @@ console.log("=" .repeat(50));
 const testFiles = [
   "./feexveb.test.js",
   "./state.test.js",
-  "./webjsx.test.js", 
+  // Removed webjsx.test.js since wrappers are dropped
   "./component.test.js",
   "./htmx_integration.test.js",
   "./test_monospace_integration.js"

@@ -17,7 +17,6 @@ console.assert(FeexVeb !== null, "FeexVeb should not be null");
 console.log("\n✓ Test 2: Core JSX functions exist");
 console.assert(typeof FeexVeb.createElement === "function", "createElement should be a function");
 console.assert(typeof FeexVeb.Fragment === "function", "Fragment should be a function");
-console.assert(typeof FeexVeb.render === "function", "render should be a function");
 console.assert(typeof FeexVeb.renderToString === "function", "renderToString should be a function");
 
 // Test 3: State management functions exist
@@ -37,8 +36,6 @@ console.assert(typeof FeexVeb.defineComponent === "function", "defineComponent s
 console.log("\n✓ Test 5: Utility functions exist");
 console.assert(typeof FeexVeb.createStates === "function", "createStates should be a function");
 console.assert(typeof FeexVeb.getValues === "function", "getValues should be a function");
-console.assert(typeof FeexVeb.applyDiff === "function", "applyDiff should be a function");
-console.assert(typeof FeexVeb.createDomNode === "function", "createDomNode should be a function");
 
 // Test 6: HTMX integration exists
 console.log("\n✓ Test 6: HTMX integration exists");
@@ -72,14 +69,6 @@ console.assert(typeof FeexVeb.styling.injectMonospaceStyles === "function", "sty
 console.log("\n✓ Test 9: Global registration");
 console.assert(globalThis.FeexVeb === FeexVeb, "FeexVeb should be globally registered");
 
-// Test 10: Enhanced render function
-console.log("\n✓ Test 10: Enhanced render function");
-const testContainer = document.createElement("div");
-try {
-  await FeexVeb.render(testContainer, FeexVeb.createElement("div", null, "Test"));
-  console.assert(testContainer.children.length > 0, "Enhanced render should append elements");
-} catch (error) {
-  console.log("  Enhanced render test skipped (async dependencies)");
-}
+// (render/hydrate wrappers are removed; use mono-jsx directly if needed)
 
 console.log("\n🎉 All FeexVeb main entry point tests passed!");
