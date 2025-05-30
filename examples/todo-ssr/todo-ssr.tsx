@@ -1,4 +1,4 @@
-/** @jsxImportSource https://esm.sh/preact */
+/** @jsxImportSource mono-jsx */
 
 // 2. Todo Interface and State
 export interface Todo {

@@ -1,5 +1,4 @@
-/** @jsxImportSource https://esm.sh/preact */
-import { render } from "https://esm.sh/preact-render-to-string@6.4.0";
+/** @jsxImportSource mono-jsx */
 
 // Import the simplified FeexVeb components
 import "../lib/src/feexveb.js";
@@ -10,7 +9,7 @@ import {
   deleteTodo,
   TodoItem,
   TodoPage,
-  todos as todoState,
+  // todos as todoState,
   toggleTodo,
 } from "../examples/todo-ssr/todo-ssr.tsx";
 import { UnifiedLayout } from "../examples/todo-ssr/unified-layout.tsx";
@@ -71,15 +70,6 @@ function isHtmxRequest(req: Request): boolean {
 }
 
 /**
- * Utility to create HTML response from JSX
- */
-function htmlResponse(jsx: any): Response {
-  return new Response(render(jsx), {
-    headers: { "Content-Type": "text/html" },
-  });
-}
-
-/**
  * Utility to create JSON response
  */
 function jsonResponse(data: any): Response {
@@ -109,7 +99,7 @@ async function handleRequest(req: Request): Promise<Response> {
   }
 
   if (pathname === "/todo-ssr") {
-    return htmlResponse(<TodoPage />);
+    return <TodoPage />;
   }
 
   // --- Todo SSR API Routes ---
@@ -145,9 +135,7 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx
-      ? htmlResponse(counterElement)
-      : jsonResponse({ value: counter });
+    return isHtmx ? counterElement : jsonResponse({ value: counter });
   }
 
   // Counter increment
@@ -158,9 +146,7 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx
-      ? htmlResponse(counterElement)
-      : jsonResponse({ value: counter });
+    return isHtmx ? counterElement : jsonResponse({ value: counter });
   }
 
   // Counter decrement
@@ -171,9 +157,7 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx
-      ? htmlResponse(counterElement)
-      : jsonResponse({ value: counter });
+    return isHtmx ? counterElement : jsonResponse({ value: counter });
   }
 
   // Counter reset
@@ -184,9 +168,7 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx
-      ? htmlResponse(counterElement)
-      : jsonResponse({ value: counter });
+    return isHtmx ? counterElement : jsonResponse({ value: counter });
   }
 
   // Out-of-band update demo
@@ -208,7 +190,7 @@ async function handleApiRoutes(
           <div>Counter updated to: {counter}</div>
         </>
       );
-      return htmlResponse(oobUpdates);
+      return oobUpdates;
     }
 
     return jsonResponse({ value: counter });
@@ -222,20 +204,20 @@ async function handleApiRoutes(
  */
 function handleHomePage(): Response {
   // Simple server-side component rendering without complex SSR machinery
-  const counterHtml = render(
+  const counterHtml = (
     <div class="ssr-counter">
       <h3>SSR Demo Counter</h3>
       <p>Current count: 0</p>
       <button>Increment (SSR)</button>
       <button>Decrement (SSR)</button>
-    </div>,
+    </div>
   );
 
-  return htmlResponse(
+  return (
     <UnifiedLayout
-      feexCounterSlotHtml={counterHtml}
+      feexCounterSlotHtml={String(counterHtml)}
       monospaceCss={getMonospaceCssForHtml()}
-    />,
+    />
   );
 }
 
@@ -257,7 +239,7 @@ async function handleTodoRoutes(
     }
 
     const newTodo = addTodo(text);
-    return htmlResponse(<TodoItem {...newTodo} />);
+    return <TodoItem {...newTodo} />;
   }
 
   // Toggle todo
@@ -270,7 +252,7 @@ async function handleTodoRoutes(
       return new Response("Todo not found", { status: 404 });
     }
 
-    return htmlResponse(<TodoItem {...updatedTodo} />);
+    return <TodoItem {...updatedTodo} />;
   }
 
   // Delete todo

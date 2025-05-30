@@ -1,11 +1,16 @@
-/** @jsxImportSource https://esm.sh/preact */
+/** @jsxImportSource mono-jsx */
 
 /**
  * Unified Home Page Layout - Consolidates all FeexVeb examples and documentation
  */
 
 // Modified to accept feexCounterSlotHtml and monospaceCss, and to render a full HTML document
-export const UnifiedLayout = ({ feexCounterSlotHtml, monospaceCss }: { feexCounterSlotHtml?: string; monospaceCss?: string }) => (
+export const UnifiedLayout = (
+  { feexCounterSlotHtml, monospaceCss }: {
+    feexCounterSlotHtml?: string;
+    monospaceCss?: string;
+  },
+) => (
   <html>
     <head>
       <meta charSet="UTF-8" />
