@@ -1,5 +1,4 @@
-/** @jsxImportSource npm:mono-jsx */
-import { html } from "npm:mono-jsx"; // html might be needed for Fragments or specific attributes
+/** @jsxImportSource https://esm.sh/preact */
 
 // 2. Todo Interface and State
 export interface Todo {
@@ -49,7 +48,9 @@ export function TodoItem(todo: Todo): JSX.Element {
         hx-target={`#todo-item-${todo.id}`}
         hx-swap="outerHTML"
       />
-      <span style={{ textDecoration: todo.completed ? "line-through" : "none" }}>
+      <span
+        style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+      >
         {todo.text}
       </span>
       <button
@@ -66,11 +67,11 @@ export function TodoItem(todo: Todo): JSX.Element {
 export function renderTodos(): JSX.Element {
   return (
     <ul id="todo-list">
-      {todos.map((todo) => (
-        <TodoItem {...todo} />
-      ))}
+      {todos.map((todo) => <TodoItem {...todo} />)}
       {/* HTMX needs a target even if the list is empty, so a placeholder or an empty ul is fine */}
-      {todos.length === 0 && <li id="empty-message">No todos yet. Add one above!</li>}
+      {todos.length === 0 && (
+        <li id="empty-message">No todos yet. Add one above!</li>
+      )}
     </ul>
   );
 }
@@ -105,6 +106,8 @@ export function TodoPage(): JSX.Element {
       <body>
         <h1>Todo List SSR</h1>
         <form
+          action="/todo-ssr/add"
+          method="post"
           hx-post="/todo-ssr/add"
           hx-target="#todo-list"
           hx-swap="beforeend" // Add new todo item to the end of the list

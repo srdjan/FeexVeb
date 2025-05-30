@@ -1,10 +1,9 @@
 {
   "tasks": {
-    "dev": "deno run --watch --allow-net --allow-read --allow-env server/server.ts"
+    "dev": "deno run --watch --allow-net --allow-read --allow-env server/server.tsx"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
-    "@maverick-js/signals": "npm:@maverick-js/signals@^5.11.5",
     "mono-jsx": "npm:mono-jsx@^0.5.0",
     "mono-jsx/jsx-runtime": "npm:mono-jsx@^0.5.0/jsx-runtime"
   },

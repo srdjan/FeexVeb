@@ -2,7 +2,9 @@
   "version": "5",
   "specifiers": {
     "npm:@maverick-js/signals@^5.11.5": "5.11.5",
-    "npm:mono-jsx@0.5": "0.5.0"
+    "npm:mono-jsx@*": "0.5.0",
+    "npm:mono-jsx@0.5": "0.5.0",
+    "npm:mono-jsx@0.5.0": "0.5.0"
   },
   "npm": {
     "@maverick-js/signals@5.11.5": {
@@ -14,21 +16,28 @@
     }
   },
   "redirects": {
+    "https://esm.sh/preact/jsx-runtime": "https://esm.sh/preact@10.26.8/jsx-runtime",
     "https://esm.sh/preact@%3E=10?target=denonext": "https://esm.sh/preact@10.26.7?target=denonext"
   },
   "remote": {
+    "https://deno.land/std@0.208.0/async/delay.ts": "a6142eb44cdd856b645086af2b811b1fcce08ec06bb7d50969e6a872ee9b8659",
+    "https://deno.land/std@0.208.0/http/server.ts": "f3cde6672e631d3e00785743cfa96bfed275618c0352c5ae84abbe5a2e0e4afc",
     "https://esm.sh/preact-render-to-string@6.3.1": "d0c7107a8b8ebc52797986a6ac9d57e780cf956fdad498f2dee58745c263d541",
     "https://esm.sh/preact-render-to-string@6.3.1/denonext/preact-render-to-string.mjs": "1f0e7b0aac1b9067fec288bb544b14beba78527fcf04f34fb02b098cb7fb5a6d",
+    "https://esm.sh/preact-render-to-string@6.4.0": "da2b788ea28238cc8bcf5282ca91f28940ce55dda51eb739440b5435d58b4654",
+    "https://esm.sh/preact-render-to-string@6.4.0/denonext/preact-render-to-string.mjs": "fc2d3eec50838b000e92abd6d282537f604c25d11a3b2ecf7fe2e327237ad004",
     "https://esm.sh/preact@10.19.3/denonext/jsx-runtime.mjs": "aea5aea2cbb469e705804ff24e94299564a9d1e89ba6d1b08757962d2320aab6",
     "https://esm.sh/preact@10.19.3/denonext/preact.mjs": "050906b5fcc2e1703c3f58879378077191dbd58d5d415bcb8dcbc35c4fd0f5d9",
     "https://esm.sh/preact@10.19.3/jsx-runtime": "c0a489946b2a492ed590365ce1dbb2606adef27635722687b7d6320f57faf435",
     "https://esm.sh/preact@10.26.7/denonext/preact.mjs": "ad8c08b59c94425cd152de25c5129b59f522fba31a60fff33dced3cb1a86a6a5",
-    "https://esm.sh/preact@10.26.7?target=denonext": "6152322fa5931fd0463ab7e47838c2c690776bad89ca6db8330ddc6c9d376051"
+    "https://esm.sh/preact@10.26.7?target=denonext": "6152322fa5931fd0463ab7e47838c2c690776bad89ca6db8330ddc6c9d376051",
+    "https://esm.sh/preact@10.26.8/denonext/jsx-runtime.mjs": "81aa2784a8f9b4bcf59b6619505fc027e29de5b8acc88a39d588ad5a058b5fa0",
+    "https://esm.sh/preact@10.26.8/denonext/preact.mjs": "15cb76ed3f64c60ee55efae71db9561133cbb37af609921ddef445c4a543fad2",
+    "https://esm.sh/preact@10.26.8/jsx-runtime": "53ae918d4a68dc65cecf7ca4e211e2036b1328d1339a7872c6bc83e7732c3729"
   },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
-      "npm:@maverick-js/signals@^5.11.5",
       "npm:mono-jsx@0.5"
     ]
   }

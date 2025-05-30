@@ -1,82 +1,128 @@
-# CLAUDE.md - FeexVeb Development Guide
+# CLAUDE.md
 
-## Build & Development
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
-- Start dev server: `deno task dev`
-- Server: Run with `deno run --allow-net --allow-read server/server.ts`
-- To test the counter example: `cd examples/counter && deno run --allow-net --allow-read ../../server/server.ts`
+## Development Commands
 
-## Project Structure
+```bash
+# Start development server with hot reload
+deno task dev
 
-- `lib/feexveb.js` - Core library
-- `lib/src/` - Modular implementation files
-  - `lib/src/component.js` - Component definition system
-  - `lib/src/state.js` - Reactive state management
-  - `lib/src/eventbus.js` - Event bus for component communication
-  - `lib/src/htmx_integration.js` - HTMX integration utilities
-  - `lib/src/monospace-styles.js` - Default monospace styling system
-  - `lib/src/utils.js` - Utility functions
-  - `lib/src/webjsx.js` - JSX implementation
-- `examples/` - Example implementations
-- `server/` - Deno HTTP server for examples
+# Run tests (if available)
+deno test
 
-## Code Style
+# Check formatting
+deno fmt --check
 
-- JSX syntax with Web Components
-- Functional programming approach with hooks-like patterns
-- Kebab-case for HTML custom element tags
-- CamelCase for JavaScript identifiers
-- TypeScript with strict typing
-
-## Component Conventions
-
-1. Components defined with `FeexVeb.component({...})`
-2. Required options: `tag`, `setup`, `render`
-3. State management via `FeexVeb.useState()` and `FeexVeb.useComputed()`
-4. Side effects with `FeexVeb.useEffect()`
-5. Component properties configured via HTML attributes
-
-## Styling System
-
-1. Default monospace styling based on "The Monospace Web" design principles
-2. Automatically applied to components using Shadow DOM
-3. Can be disabled with `useMonospaceStyles: false` option
-4. Access styling utilities via `FeexVeb.styling` namespace:
-   - `FeexVeb.styling.monospaceCss` - CSS string
-   - `FeexVeb.styling.createMonospaceStyleElement()` - Create style element
-   - `FeexVeb.styling.injectMonospaceStyles(root)` - Inject styles into element/shadow root
-5. Custom styles can be added to components using standard CSS
-
-## Component Options
-
-```javascript
-FeexVeb.component({
-  // Required options
-  tag: 'my-component',           // HTML tag name (must contain a hyphen)
-  setup: (ctx) => { ... },       // Setup function that initializes state, methods, effects
-  render: (ctx) => { ... },      // Render function that returns JSX
-
-  // Optional options
-  shadowMode: 'open',            // 'open', 'closed', or null (default)
-  useMonospaceStyles: true,      // Apply default monospace styling (default: true)
-  attributesSchema: {            // Schema for attribute-to-state mapping
-    'initial-count': 'number',   // Attribute types: 'string', 'number', 'boolean'
-    'title': 'string'
-  },
-  attributes: ['title'],         // Alternative to attributesSchema (simpler)
-  processHtmxInShadow: true      // Process HTMX in shadow DOM (default: true)
-});
+# Format code
+deno fmt
 ```
 
-## Error Handling
+## Architecture Overview
 
-- Functions should return cleanup functions where appropriate
-- Validate component options and throw descriptive errors
-- Use try/catch blocks for error handling in async operations
+FeexVeb is a minimal functional library for building web applications with JSX
+and Web Components that integrates seamlessly with HTMX. The codebase follows a
+modular architecture:
 
-## HTMX Integration
+### Core Library Structure (`lib/src/`)
 
-- Use `FeexVeb.htmx.init()` to initialize HTMX
-- Use `FeexVeb.htmx.component()` for HTMX-specific components
-- HTMX attributes are automatically processed after rendering
-- Shadow DOM can complicate HTMX targeting - use with caution
+- **`feexveb.js`** - Main entry point that aggregates all modules
+- **`component.js`** - Two-tier component API: simplified `component()` and
+  advanced `defineComponent()`
+- **`state.js`** - Reactive state management using Maverick.js Signals with
+  `useState`, `useComputed`, `useEffect`
+- **`webjsx.js`** - Virtual DOM implementation for JSX rendering
+- **`server-renderer.js`** - Server-side rendering utilities for SSR
+- **`htmx_integration.js`** - HTMX integration utilities and event handling
+- **`monospace-styles.js`** - "The Monospace Web" design system CSS
+- **`eventbus.js`** - Cross-component communication system
+- **`utils.js`** - Attribute helpers and utilities
+
+### Component APIs
+
+**Simplified API (`FeexVeb.component`)** - Recommended for most components:
+
+- Declarative state, computed values, and methods
+- Direct state access in render functions (no `.get()` calls)
+- Automatic attribute binding with type inference
+- Minimal boilerplate
+
+**Advanced API (`FeexVeb.defineComponent`)** - For complex components:
+
+- Full control over component lifecycle
+- Manual state management with explicit `.get()/.set()` calls
+- Advanced effect management
+
+### State Management Philosophy
+
+- Uses lightweight reactive signals inspired by mono-jsx patterns
+- Automatic dependency tracking for computed values
+- Synchronous updates with batching via `tick()`
+- Built-in cleanup and garbage collection
+- Zero external dependencies for state management
+
+### HTMX Integration
+
+- Components can listen to HTMX events (`htmx:beforeRequest`,
+  `htmx:afterRequest`, etc.)
+- Server endpoints return JSX that gets auto-converted to HTML strings
+- Hybrid approach: server as source of truth, client for optimistic updates
+- Use `processHtmx()` after manual DOM manipulation
+
+### Styling System
+
+- Default monospace styling based on "The Monospace Web" design principles
+- `monospaceCss` for Shadow DOM components
+- `monospaceCssForHtml` for regular HTML documents
+- Can be disabled with `useMonospaceStyles: false`
+
+### Server Architecture (`server/server.ts`)
+
+- Deno HTTP server with mono-jsx for JSX-to-HTML conversion
+- API routes under `/api/` pattern
+- Detects HTMX requests via `HX-Request` header
+- Returns JSX for HTMX requests, JSON for regular API calls
+- File serving for static assets and JavaScript modules
+
+### Examples Structure
+
+- `examples/todo-ssr/` - Demonstrates SSR with HTMX for a todo application
+- Uses `UnifiedLayout` component for page structure
+- Server-side state management with client-side optimistic updates
+
+## Key Development Patterns
+
+1. **Component Registration**: Always check if component is already registered
+   before calling `FeexVeb.component()` or `FeexVeb.defineComponent()`
+
+2. **HTMX Response Handling**: Return JSX directly from server handlers -
+   mono-jsx automatically converts to HTML strings
+
+3. **State Initialization**: Use attribute binding in simplified API to override
+   default state values
+
+4. **Effect Cleanup**: Return cleanup functions from effects, especially for
+   event listeners
+
+5. **Server-Client Coordination**: Use HTMX events to coordinate between server
+   updates and client state
+
+## Dependencies
+
+- **Deno** - Runtime and package manager
+- **mono-jsx** - JSX runtime for both client and server
+- **HTMX** - HTML-driven server communication (loaded via CDN)
+
+Note: FeexVeb now includes its own lightweight reactive signals implementation,
+eliminating the need for external state management libraries.
+
+## Testing
+
+Use `test_monospace_integration.js` as reference for component testing patterns.
+Tests should verify:
+
+- Component registration and rendering
+- State reactivity and updates
+- HTMX integration
+- Attribute binding
