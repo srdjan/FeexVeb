@@ -16,8 +16,8 @@ console.assert(FeexVeb !== null, "FeexVeb should not be null");
 // Test 2: Core JSX functions exist
 console.log("\n✓ Test 2: Core JSX functions exist");
 console.assert(typeof FeexVeb.createElement === "function", "createElement should be a function");
-console.assert(typeof FeexVeb.Fragment === "function", "Fragment should be a function");
-console.assert(typeof FeexVeb.renderToString === "function", "renderToString should be a function");
+console.assert(typeof FeexVeb.Fragment === "symbol", "Fragment should be a symbol");
+// renderToString removed - mono-jsx handles SSR automatically
 
 // Test 3: State management functions exist
 console.log("\n✓ Test 3: State management functions exist");

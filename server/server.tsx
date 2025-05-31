@@ -3,6 +3,71 @@
 // Import the simplified FeexVeb components
 import "../lib/src/feexveb.js";
 
+/**
+ * Convert mono-jsx JSX elements to HTML strings
+ * mono-jsx uses array format: [tag, props, Symbol(jsx.vnode)]
+ */
+function renderToString(element: any): string {
+  if (typeof element === 'string') {
+    return element;
+  }
+  
+  if (typeof element === 'number') {
+    return String(element);
+  }
+  
+  if (element == null) {
+    return '';
+  }
+  
+  // Handle mono-jsx Fragment
+  if (Array.isArray(element) && typeof element[0] === 'symbol' && element[0].toString() === 'Symbol(jsx.fragment)') {
+    const props = element[1];
+    const children = props?.children;
+    return Array.isArray(children) 
+      ? children.map(renderToString).join('')
+      : renderToString(children);
+  }
+  
+  // Handle mono-jsx format: [tag, props, Symbol(jsx.vnode)]
+  if (Array.isArray(element) && element.length >= 2) {
+    const [tag, props] = element;
+    
+    if (typeof tag !== 'string') {
+      return '';
+    }
+    
+    const attrs = Object.entries(props || {})
+      .filter(([key, value]) => key !== 'children' && value != null)
+      .map(([key, value]) => {
+        if (key === 'className') key = 'class';
+        return `${key}="${String(value).replace(/"/g, '&quot;')}"`;
+      })
+      .join(' ');
+    
+    const children = props?.children;
+    
+    // Self-closing tags
+    if (['img', 'br', 'hr', 'input', 'meta', 'link'].includes(tag)) {
+      return `<${tag}${attrs ? ' ' + attrs : ''} />`;
+    }
+    
+    // Regular tags with children
+    const childrenHtml = Array.isArray(children) 
+      ? children.map(renderToString).join('')
+      : renderToString(children);
+      
+    return `<${tag}${attrs ? ' ' + attrs : ''}>${childrenHtml}</${tag}>`;
+  }
+  
+  // Handle arrays of elements
+  if (Array.isArray(element)) {
+    return element.map(renderToString).join('');
+  }
+  
+  return String(element);
+}
+
 // Import examples
 import {
   addTodo,
@@ -99,7 +164,9 @@ async function handleRequest(req: Request): Promise<Response> {
   }
 
   if (pathname === "/todo-ssr") {
-    return <TodoPage />;
+    return new Response(renderToString(<TodoPage />), {
+      headers: { "Content-Type": "text/html" }
+    });
   }
 
   // --- Todo SSR API Routes ---
@@ -135,7 +202,9 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx ? counterElement : jsonResponse({ value: counter });
+    return isHtmx ? new Response(renderToString(counterElement), {
+      headers: { "Content-Type": "text/html" }
+    }) : jsonResponse({ value: counter });
   }
 
   // Counter increment
@@ -146,7 +215,9 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx ? counterElement : jsonResponse({ value: counter });
+    return isHtmx ? new Response(renderToString(counterElement), {
+      headers: { "Content-Type": "text/html" }
+    }) : jsonResponse({ value: counter });
   }
 
   // Counter decrement
@@ -157,7 +228,9 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx ? counterElement : jsonResponse({ value: counter });
+    return isHtmx ? new Response(renderToString(counterElement), {
+      headers: { "Content-Type": "text/html" }
+    }) : jsonResponse({ value: counter });
   }
 
   // Counter reset
@@ -168,7 +241,9 @@ async function handleApiRoutes(
         {counter}
       </div>
     );
-    return isHtmx ? counterElement : jsonResponse({ value: counter });
+    return isHtmx ? new Response(renderToString(counterElement), {
+      headers: { "Content-Type": "text/html" }
+    }) : jsonResponse({ value: counter });
   }
 
   // Out-of-band update demo
@@ -190,7 +265,9 @@ async function handleApiRoutes(
           <div>Counter updated to: {counter}</div>
         </>
       );
-      return oobUpdates;
+      return new Response(renderToString(oobUpdates), {
+        headers: { "Content-Type": "text/html" }
+      });
     }
 
     return jsonResponse({ value: counter });
@@ -213,12 +290,14 @@ function handleHomePage(): Response {
     </div>
   );
 
-  return (
+  return new Response(renderToString(
     <UnifiedLayout
-      feexCounterSlotHtml={String(counterHtml)}
+      feexCounterSlotHtml={renderToString(counterHtml)}
       monospaceCss={getMonospaceCssForHtml()}
     />
-  );
+  ), {
+    headers: { "Content-Type": "text/html" }
+  });
 }
 
 /**
@@ -239,7 +318,9 @@ async function handleTodoRoutes(
     }
 
     const newTodo = addTodo(text);
-    return <TodoItem {...newTodo} />;
+    return new Response(renderToString(<TodoItem {...newTodo} />), {
+      headers: { "Content-Type": "text/html" }
+    });
   }
 
   // Toggle todo
@@ -252,7 +333,9 @@ async function handleTodoRoutes(
       return new Response("Todo not found", { status: 404 });
     }
 
-    return <TodoItem {...updatedTodo} />;
+    return new Response(renderToString(<TodoItem {...updatedTodo} />), {
+      headers: { "Content-Type": "text/html" }
+    });
   }
 
   // Delete todo
